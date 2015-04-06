@@ -15,24 +15,17 @@
 		</mvc:message-converters>
 	</mvc:annotation-driven>
 	
-	<!-- 参数验证
-	<bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
-		<property name="validationMessageSource" ref="messageSource" />
-	</bean>
-
-	<bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
-		<property name="defaultEncoding" value="UTF-8" />
-		<property name="basenames">
-			<list>
-				<value>classpath:foo/bar/tbooks/web/validator/message</value>
-			</list>
-		</property>
-	</bean> -->
-	
 	<!-- 静态资源过滤 -->
 	<mvc:resources location="/" mapping="/login.html"></mvc:resources>
+	<mvc:resources location="/" mapping="/main.html"></mvc:resources>
+	<mvc:resources location="/html/" mapping="/html/**"></mvc:resources>
+	<mvc:resources location="/js/" mapping="/js/**"></mvc:resources>
+	<mvc:resources location="/image/" mapping="/image/**"></mvc:resources>
+	<mvc:resources location="/bootstrap/" mapping="/bootstrap/**"></mvc:resources>
+	<mvc:resources location="/media/" mapping="/media/**"></mvc:resources>
+	
 	
 	
 	<!-- 注解探测器: 扫描指定的包中的类上的注解 -->
-	<context:component-scan base-package="com.miaoxg.device.monitor.controller" />
+	<context:component-scan base-package="com.miaoxg.device.monitor.web.controller" />
 </beans>
