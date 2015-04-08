@@ -15,6 +15,7 @@ dependencies {
 	compile "commons-codec:commons-codec:1.10"
     compile "org.springframework:spring-webmvc:4.1.6.RELEASE"
     compile "org.springframework:spring-jdbc:4.1.6.RELEASE"
+    compile "org.springframework:spring-test:4.1.6.RELEASE"
     compile 'org.aspectj:aspectjweaver:1.6.2'
 	compile "org.slf4j:slf4j-api:1.7.7"
     compile "com.alibaba:fastjson:1.2.3"
