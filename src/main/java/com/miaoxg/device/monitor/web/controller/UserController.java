@@ -57,7 +57,7 @@ public class UserController extends AbstractController{
     @RequestMapping(value="menu", method=RequestMethod.GET)
     public String getUserMenu(HttpSession session) {
         // TODO 临时方式
-        boolean isAdmin = (boolean)session.getAttribute("isAdmin");
+        boolean isAdmin = Boolean.parseBoolean(session.getAttribute("isAdmin").toString());
         return JsonUtils.toSuccessJson(isAdmin ? "1" : "0");
     }
 }
