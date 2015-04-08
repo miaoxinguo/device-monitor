@@ -8,7 +8,7 @@
 	<div class="col-md-5">
 		选择要查看酒店：
 		<select id="hotelList">
-			<option value="0">请选择</option>
+			<option value="0">全部</option>
 			<option value="1">锦江之星酒店(威海世昌大道店)</option>
 			<option value="2">锦江之星酒店(山大店)</option>
 		</select>
@@ -21,172 +21,12 @@
 	</div>
 </div>
 
+<!-- loadling -->
+<div id="loading" align="center"><img src="image/loading.gif">&nbsp;&nbsp;努力加载中...</div>
+
 <!-- 设备列表 视块模式 -->
 <div id="modal_div">
-	<div class="row">
-		<div class="col-md-2">
-			<div class="panel panel-info">
-				<div class="panel-heading">设备</div>
-				<div class="panel-body">
-					<li>温度：<span></span>℃</li>
-					<li>湿度：<span></span>%</li>
-					<li>CO2：<span></span>%</li>
-					<li>NH3：<span></span>%</li>
-				</div>
-				<div class="panel-footer">
-					<a href="javascript:void(0)"><img width="15" height="15" src="image/z.png"></a>
-					<a href="javascript:void(0)"><img width="18" height="15" src="image/v.png"></a>
-					<a href="javascript:void(0)"><img width="16" height="15" src="image/m.png"></a>
-				</div>
-			</div>
-		</div>
-		<div class="col-md-2">
-			<div class="panel panel-info">
-				<div class="panel-heading">设备</div>
-				<div class="panel-body">
-					<li>温度：<span></span>℃</li>
-					<li>湿度：<span></span>%</li>
-					<li>CO2：<span></span>%</li>
-					<li>NH3：<span></span>%</li>
-				</div>
-				<div class="panel-footer">
-					<a href="javascript:void(0)"><img width="15" height="15" src="image/z.png"></a>
-					<a href="javascript:void(0)"><img width="18" height="15" src="image/v.png"></a>
-					<a href="javascript:void(0)"><img width="16" height="15" src="image/m.png"></a>
-				</div>
-			</div>
-		</div>
-		<div class="col-md-2">
-			<div class="panel panel-info">
-				<div class="panel-heading">设备</div>
-				<div class="panel-body">
-					<li>温度：<span></span>℃</li>
-					<li>湿度：<span></span>%</li>
-					<li>CO2：<span></span>%</li>
-					<li>NH3：<span></span>%</li>
-				</div>
-				<div class="panel-footer">
-					<a href="javascript:void(0)"><img width="15" height="15" src="image/z.png"></a>
-					<a href="javascript:void(0)"><img width="18" height="15" src="image/v.png"></a>
-					<a href="javascript:void(0)"><img width="16" height="15" src="image/m.png"></a>
-				</div>
-			</div>
-		</div>
-		<div class="col-md-2">
-			<div class="panel panel-info">
-				<div class="panel-heading">设备</div>
-				<div class="panel-body">
-					<li>温度：<span></span>℃</li>
-					<li>湿度：<span></span>%</li>
-					<li>CO2：<span></span>%</li>
-					<li>NH3：<span></span>%</li>
-				</div>
-				<div class="panel-footer">
-					<a href="javascript:void(0)"><img width="15" height="15" src="image/z.png"></a>
-					<a href="javascript:void(0)"><img width="18" height="15" src="image/v.png"></a>
-					<a href="javascript:void(0)"><img width="16" height="15" src="image/m.png"></a>
-				</div>
-			</div>
-		</div>
-		<div class="col-md-2">
-			<div class="panel panel-info">
-				<div class="panel-heading">设备</div>
-				<div class="panel-body">
-					<li>温度：<span></span>℃</li>
-					<li>湿度：<span></span>%</li>
-					<li>CO2：<span></span>%</li>
-					<li>NH3：<span></span>%</li>
-				</div>
-				<div class="panel-footer">
-					<a href="javascript:void(0)"><img width="15" height="15" src="image/z.png"></a>
-					<a href="javascript:void(0)"><img width="18" height="15" src="image/v.png"></a>
-					<a href="javascript:void(0)"><img width="16" height="15" src="image/m.png"></a>
-				</div>
-			</div>
-		</div>
-		<div class="col-md-2">
-			<div class="panel panel-info">
-				<div class="panel-heading">设备</div>
-				<div class="panel-body">
-					<li>温度：<span></span>℃</li>
-					<li>湿度：<span></span>%</li>
-					<li>CO2：<span></span>%</li>
-					<li>NH3：<span></span>%</li>
-				</div>
-				<div class="panel-footer">
-					<a href="javascript:void(0)"><img width="15" height="15" src="image/z.png"></a>
-					<a href="javascript:void(0)"><img width="18" height="15" src="image/v.png"></a>
-					<a href="javascript:void(0)"><img width="16" height="15" src="image/m.png"></a>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-md-2">
-			<div class="panel panel-info">
-				<div class="panel-heading">设备</div>
-				<div class="panel-body">
-					<li>温度：<span></span>℃</li>
-					<li>湿度：<span></span>%</li>
-					<li>CO2：<span></span>%</li>
-					<li>NH3：<span></span>%</li>
-				</div>
-				<div class="panel-footer">
-					<a href="javascript:void(0)"><img width="15" height="15" src="image/z.png"></a>
-					<a href="javascript:void(0)"><img width="18" height="15" src="image/v.png"></a>
-					<a href="javascript:void(0)"><img width="16" height="15" src="image/m.png"></a>
-				</div>
-			</div>
-		</div>
-		<div class="col-md-2">
-			<div class="panel panel-info">
-				<div class="panel-heading">设备</div>
-				<div class="panel-body">
-					<li>温度：<span></span>℃</li>
-					<li>湿度：<span></span>%</li>
-					<li>CO2：<span></span>%</li>
-					<li>NH3：<span></span>%</li>
-				</div>
-				<div class="panel-footer">
-					<a href="javascript:void(0)"><img width="15" height="15" src="image/z.png"></a>
-					<a href="javascript:void(0)"><img width="18" height="15" src="image/v.png"></a>
-					<a href="javascript:void(0)"><img width="16" height="15" src="image/m.png"></a>
-				</div>
-			</div>
-		</div>
-		<div class="col-md-2">
-			<div class="panel panel-info">
-				<div class="panel-heading">设备</div>
-				<div class="panel-body">
-					<li>温度：<span></span>℃</li>
-					<li>湿度：<span></span>%</li>
-					<li>CO2：<span></span>%</li>
-					<li>NH3：<span></span>%</li>
-				</div>
-				<div class="panel-footer">
-					<a href="javascript:void(0)"><img width="15" height="15" src="image/z.png"></a>
-					<a href="javascript:void(0)"><img width="18" height="15" src="image/v.png"></a>
-					<a href="javascript:void(0)"><img width="16" height="15" src="image/m.png"></a>
-				</div>
-			</div>
-		</div>
-		<div class="col-md-2">
-			<div class="panel panel-info">
-				<div class="panel-heading">设备</div>
-				<div class="panel-body">
-					<li>温度：<span></span>℃</li>
-					<li>湿度：<span></span>%</li>
-					<li>CO2：<span></span>%</li>
-					<li>NH3：<span></span>%</li>
-				</div>
-				<div class="panel-footer">
-					<a href="javascript:void(0)"><img width="15" height="15" src="image/z.png"></a>
-					<a href="javascript:void(0)"><img width="18" height="15" src="image/v.png"></a>
-					<a href="javascript:void(0)"><img width="16" height="15" src="image/m.png"></a>
-				</div>
-			</div>
-		</div>
-	</div>
+	
 </div>
 
 <!-- 设备列表 列表模式 -->
@@ -194,77 +34,65 @@
 	<div class="row">
 		<div class="col-md-12">
 			<!-- 数据表格 -->
-			<table class="display" id="deviceStatusTable">
+			<table class="table table-striped table-hover datatable" id="deviceStatusTable">
 				<thead>
 					<tr>
 						<th>设备ID</th>
+						<th>设备名</th>
+						<th>状态</th>
 						<th>温度</th>
 						<th>湿度</th>
 						<th>CO2</th>
 						<th>NH3</th>
 					</tr>
 				</thead>
-				<tbody>
-		            <tr>
-		                <td>000000002</td>
-		                <td>23</td>
-		                <td>44</td>
-		                <td>23</td>
-		                <td>12</td>
-		            </tr>
-		            <tr>
-		                <td>123123199</td>
-		                <td>23</td>
-		                <td>22</td>
-		                <td>32</td>
-		                <td>14</td>
-		            </tr>
-		            <tr>
-		                <td>888888888</td>
-		                <td>21</td>
-		                <td>32</td>
-		                <td>42</td>
-		                <td>99</td>
-		            </tr>
-		            <tr>
-		                <td>126693192</td>
-		                <td>24</td>
-		                <td>44</td>
-		                <td>21</td>
-		                <td>43</td>
-		            </tr>
-		             <tr>
-		                <td>000000004</td>
-		                <td>23</td>
-		                <td>44</td>
-		                <td>23</td>
-		                <td>12</td>
-		            </tr>
-		            <tr>
-		                <td>13523199</td>
-		                <td>23</td>
-		                <td>22</td>
-		                <td>32</td>
-		                <td>14</td>
-		            </tr>
-		            <tr>
-		                <td>888855888</td>
-		                <td>21</td>
-		                <td>32</td>
-		                <td>42</td>
-		                <td>99</td>
-		            </tr>
-		            <tr>
-		                <td>13293192</td>
-		                <td>24</td>
-		                <td>44</td>
-		                <td>21</td>
-		                <td>43</td>
-		            </tr>
-		        </tbody>
 			</table>
 		</div>
 	</div>
 </div>
 
+<!-- 模态窗口 维护设备-->
+<div id="edit_modal" class="modal bs-example-modal-sm">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+				<h4 class="modal-title"></h4>
+			</div>
+			<div class="modal-body">
+				<div style="width: 230px; text-align: right;">
+					<label for="id">设备编号:</label><input name="id" type="text" readonly="readonly">
+					<label for="name">设备名称:</label><input name="name" type="text">
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button id="modal_btn_save" type="button" class="btn btn-primary">保存</button>
+			</div>
+		</div>
+		<!-- /.modal-content -->
+	</div>
+	<!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+	
+<div id="template_div" hidden>
+	<div class="col-md-2">
+			<div class="panel panel-info">
+				<div class="panel-heading">设备</div>
+				<div class="panel-body">
+					<li>温度：<span></span>℃</li>
+					<li>湿度：<span></span>%</li>
+					<li>CO2：<span></span>%</li>
+					<li>NH3：<span></span>%</li>
+				</div>
+				<div class="panel-footer">
+					<a href="javascript:void(0)"><img width="15" height="15" src="image/z.png"></a>
+					<a href="javascript:void(0)"><img width="18" height="15" src="image/v.png"></a>
+					<a href="javascript:void(0)"><img width="16" height="15" src="image/m.png"></a>
+				</div>
+			</div>
+		</div>
+</div>
 <script type="text/javascript" src="js/deviceStatus.js"></script>

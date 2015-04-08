@@ -1,4 +1,14 @@
 $(document).ready(function(){
+	$.get("menu", function(data){
+		if(!data.success){
+			window.location.href="login.html";
+			return;
+		}
+		if(data.msg != "1"){
+			$("#navbar li:gt(0)").hide();
+		}
+	},"json");
+	
 	// 加载首页 设备指标页
 	loadPage("deviceStatus.html");
 });
