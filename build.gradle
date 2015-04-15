@@ -2,7 +2,7 @@ apply plugin: 'war'
 apply plugin: 'eclipse-wtp'
 
 sourceCompatibility = 1.8
-version = '1.0'
+//version = '1.0'
 
 [compileJava, javadoc, compileTestJava]*.options*.encoding = 'UTF-8'
 
