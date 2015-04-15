@@ -23,23 +23,53 @@ public class DeviceService {
     private final String FLAG_HUMIDITY      = "&C";       // 湿度
     private final String FLAG_CO2           = "&D";       // CO2
     private final String FLAG_NH3           = "&E";       // NH3
+    private final String FLAG_IS_OPEN       = "&H";       // 是否开机
+    private final String DEVICE_CLOSED      = "0";        // 关机
      
+    /**
+     * 创建连接
+     */
+    public DatagramSocket createClient() {
+        // 创建客户端
+        DatagramSocket client = null;
+        try {
+            client = new DatagramSocket();
+            client.setSoTimeout(20000);
+        } catch (SocketException e) {
+           throw new RuntimeException("连接服务器失败");
+        }
+        return client;
+    }
     
     /**
      * 根据设备编号从中心服务器获取该设备的数据
      */
-    public void getRemoteDeviceInfo(String deviceId) throws IOException {
-        DatagramSocket client = new DatagramSocket();
+    public void getRemoteDeviceInfo(String deviceId) {
+        DatagramSocket client = createClient();
+        // 构造地址
+        InetAddress addr = null;
+        try {
+            addr = InetAddress.getByName(Constants.SERVER_IP);
+        } catch (UnknownHostException e) {
+            client.close();
+            throw new RuntimeException("连接服务器失败");
+        }
         
         String sendStr = "LNGNUM&" + deviceId;
         byte[] sendBuf = sendStr.getBytes();
-        InetAddress addr = InetAddress.getByName(Constants.SERVER_IP);
         DatagramPacket sendPacket = new DatagramPacket(sendBuf ,sendBuf.length , addr , Constants.SERVER_PORT);
-        client.send(sendPacket);
         
-        byte[] recvBuf = new byte[1024];
-        DatagramPacket recvPacket = new DatagramPacket(recvBuf , recvBuf.length);
-        client.receive(recvPacket);
+        
+        DatagramPacket recvPacket = null;
+        try {
+            client.send(sendPacket);
+            byte[] recvBuf = new byte[1024];
+            recvPacket = new DatagramPacket(recvBuf , recvBuf.length);
+            client.receive(recvPacket);
+        } catch (IOException e) {
+            // ingore
+            e.printStackTrace();
+        }
         
         String recvStr = new String(recvPacket.getData() , 0, recvPacket.getLength());
         System.out.println("收到:" + recvStr);
@@ -50,14 +80,7 @@ public class DeviceService {
      * 批量获取信息
      */
     public JSONArray getRemoteDeviceInfo(List<String> deviceList) {
-        // 创建客户端
-        DatagramSocket client = null;
-        try {
-            client = new DatagramSocket();
-        } catch (SocketException e) {
-           throw new RuntimeException("连接服务器失败");
-        }
-        
+        DatagramSocket client = createClient();
         // 构造地址
         InetAddress addr = null;
         try {
@@ -80,10 +103,11 @@ public class DeviceService {
                 client.receive(recvPacket);
                 String recvStr = new String(recvPacket.getData() , 0, recvPacket.getLength());
                 
-//                System.out.println("收到:" + recvStr);
+                //System.out.println("收到:" + recvStr);
                 arr.add(analyzeMessage(recvStr));
             } catch (IOException e) {
                 // ingore
+                e.printStackTrace();
             } 
         }
         client.close();
@@ -137,12 +161,18 @@ public class DeviceService {
             // NH3
             int nh3BeginIndex = msg.indexOf(FLAG_NH3) + 3;
             obj.put("nh3", msg.substring(nh3BeginIndex, msg.indexOf("&", nh3BeginIndex)));
+            
+            // 开机/关机
+            int isOpenBeginIndex = msg.indexOf(FLAG_IS_OPEN) + 3;
+            String isDeviceClosed = msg.substring(isOpenBeginIndex, msg.indexOf("&", isOpenBeginIndex));
+            obj.put("isOpen", DEVICE_CLOSED.equals(isDeviceClosed)? "关": "开");
         }
         else{ //设置默认值
             obj.put("temperature", "-");
             obj.put("humidity", "-");
             obj.put("co2", "-");
             obj.put("nh3", "-");
+            obj.put("isOpen", "-");
         }
         
         return obj;

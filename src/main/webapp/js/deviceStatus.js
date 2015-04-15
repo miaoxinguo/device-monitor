@@ -1,22 +1,6 @@
 var id_of_clearInterval;
 
 $(document).ready(function(){
-	// 加载该用户所能查看的所有酒店
-	/*
-	$.ajax({
-		url: '/device-monitor/hotels',
-		type: 'get',
-		dataType: 'json',
-		success:function(data){
-			if(!data.success){
-				alert(data.msg);
-				return;
-			}
-			console.log(data);
-		}
-	});
-	*/
-	
 	// 表格
 	var t = $("#deviceStatusTable").dataTable({
 		"bPaginate": true,
@@ -38,6 +22,7 @@ $(document).ready(function(){
 	    "aoColumns": [   {"mDataProp":"id"},  
 	                     {"mDataProp":"devname"},
 	                     {"mDataProp":"status"},
+	                     {"mDataProp":"isOpen"},
 	                     {"mDataProp":"temperature"},
 	                     {"mDataProp":"humidity"},
 	                     {"mDataProp":"co2"},
@@ -114,18 +99,38 @@ $('#deviceStatusTable').DataTable().on( 'draw', function () {
     	var offset = rowIndex * rowSize;
         for(var i=offset ;i<offset+rowSize && i<total; i++){
         	$("#template_div .col-md-2").clone().appendTo($(this));
-        	
+
         	// 从表中的第i行取数据
         	var $tr = $('#deviceStatusTable tbody tr:eq('+ i +')')
         	
         	// 取最新添加的视块
         	var $modalDiv = $(this).children(":last");
         	
+//        	// 根据设备的状态：在线/离线、开机/关机 设置面板标题的背景色
+        	if( "在线" == $tr.children("td:eq(2)").text() ){
+        		$modalDiv.find("div.panel").removeClass("panel-warning");
+	        	// 只有在线才能判断是否开机
+	    		if( "关" == $tr.children("td:eq(3)").text() ){
+	        		$modalDiv.find("div.panel").removeClass("panel-info").addClass("panel-default");
+	        	} 
+	    		else if( "开" == $tr.children("td:eq(3)").text() ){
+	    			$modalDiv.find("div.panel").removeClass("panel-default").addClass("panel-info");
+	    		}
+        	}
+        	else{
+        		$modalDiv.find("div.panel").removeClass("panel-default panel-info").addClass("panel-warning");
+        	}
+        	
+    		
         	$modalDiv.find("div.panel-heading").text( $tr.children("td:eq(1)").text() );  // name
-        	$modalDiv.find("div.panel-body li:eq(0) span").text( $tr.children("td:eq(3)").text() );  // 温度
-        	$modalDiv.find("div.panel-body li:eq(1) span").text( $tr.children("td:eq(4)").text() );  // 湿度
-        	$modalDiv.find("div.panel-body li:eq(2) span").text( $tr.children("td:eq(5)").text() );  // co2
-        	$modalDiv.find("div.panel-body li:eq(3) span").text( $tr.children("td:eq(6)").text() );  // nh3
+//        	$modalDiv.find("div.panel-body li").each(function(index){
+//        		var tdIndex = index + 4;  // 视块与表格数据的对应顺序固定
+//        		$(this).children("span").text( $tr.children("td:eq("+ tdIndex +")").text() );
+//        	});
+        	$modalDiv.find("div.panel-body li:eq(0) span").text( $tr.children("td:eq(4)").text() );  // 温度
+        	$modalDiv.find("div.panel-body li:eq(1) span").text( $tr.children("td:eq(5)").text() );  // 湿度
+        	$modalDiv.find("div.panel-body li:eq(2) span").text( $tr.children("td:eq(6)").text() );  // co2
+        	$modalDiv.find("div.panel-body li:eq(3) span").text( $tr.children("td:eq(7)").text() );  // nh3
         	
         	// 图标点击事件
         	$modalDiv.find("div.panel-footer a:eq(0)").click(function(){
