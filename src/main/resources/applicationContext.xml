@@ -10,15 +10,15 @@
    	 	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
    	 	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-	<!-- 配置DataSource数据源 
+	<!-- 配置DataSource数据源 -->
 	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
-		<property name="url" value="jdbc:mysql://127.0.0.1:3306/tbooks" />
-	    <property name="username" value="tbooks_root" />
-	    <property name="password" value="miaoxg" />
+		<property name="url" value="jdbc:mysql://127.0.0.1:3306/dm" />
+	    <property name="username" value="dm_root" />
+	    <property name="password" value="321" />
 	     
 	    <property name="filters" value="stat" />
 	    
-	    <property name="maxActive" value="20" />
+	    <property name="maxActive" value="10" />
 	    <property name="initialSize" value="1" /> 
 	    <property name="maxWait" value="60000" />
 	    <property name="minIdle" value="1" />
@@ -27,18 +27,18 @@
 	    <property name="testWhileIdle" value="true" />
 	    <property name="testOnBorrow" value="false" />
 	    <property name="testOnReturn" value="false" />
-	</bean>-->
+	</bean>
 
-	<!-- 配置事务管理器，注意这里的dataSource和SqlSessionFactoryBean的dataSource要一致，不然事务就没有作用了 
+	<!-- 配置事务管理器，注意这里的dataSource和SqlSessionFactoryBean的dataSource要一致，不然事务就没有作用了 -->
 	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 		<property name="dataSource" ref="dataSource" />
-	</bean>-->
+	</bean>
 	
 	<!-- 强制使用CGLIB代理 -->
 	<aop:aspectj-autoproxy proxy-target-class="true"/>
 	
-	<!-- 开启注解事务 
-	<tx:annotation-driven transaction-manager="transactionManager"/>-->
+	<!-- 开启注解事务 -->
+	<tx:annotation-driven transaction-manager="transactionManager"/>
 
 	<!-- 注解探测器-->
     <context:component-scan base-package="com.miaoxg.device.monitor.core, com.miaoxg.device.monitor.dao, com.miaoxg.device.monitor.service"/>
