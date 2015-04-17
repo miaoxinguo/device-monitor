@@ -2,7 +2,6 @@ package com.miaoxg.device.monitor.core;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.stereotype.Component;
 
 /**
  * 以静态变量保存ApplicationContext, 可在任何地方任何时候中取到ApplicaitonContext.
@@ -10,7 +9,6 @@ import org.springframework.stereotype.Component;
  * @author miaoxinguo2002@gmail.com
  * @version orange 2013-11-26
  */
-@Component
 public class ApplicationContextHolder implements ApplicationContextAware {
     
     /** ApplicationContext实例 */
