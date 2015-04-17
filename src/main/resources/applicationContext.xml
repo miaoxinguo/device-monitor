@@ -29,6 +29,11 @@
 	    <property name="testOnReturn" value="false" />
 	</bean>
 
+	<!-- 注册JdbcTemplate -->
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+    	<property name="dataSource" ref="dataSource" />
+    </bean>
+    
 	<!-- 配置事务管理器，注意这里的dataSource和SqlSessionFactoryBean的dataSource要一致，不然事务就没有作用了 -->
 	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 		<property name="dataSource" ref="dataSource" />
@@ -39,10 +44,34 @@
 	
 	<!-- 开启注解事务 -->
 	<tx:annotation-driven transaction-manager="transactionManager"/>
-	
+    
 	<!-- 注册ApplicationContextHolder -->
-    <bean class="com.miaoxg.device.monitor.core.ApplicationContextHolder"/>
+	<bean class="com.miaoxg.device.monitor.core.ApplicationContextHolder"/>
     
 	<!-- 注解探测器-->
     <context:component-scan base-package="com.miaoxg.device.monitor.dao, com.miaoxg.device.monitor.service"/>
+    
+    <!-- quartz自动任务 - 定时获取设备监测值 -->
+    <bean id="getMonitorValueJob" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+    	<property name="jobClass" value="com.miaoxg.device.monitor.scheduler.GetMonitorValueJob" />
+    </bean>
+    <bean id="cronMonitorValueTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+    	<property name="jobDetail" ref="getMonitorValueJob"/>
+    	<property name="cronExpression" value="0/30 * * * * ?" />  <!-- 每30秒执行一次 -->
+    </bean>
+    
+    <!-- quartz自动任务 - 调度设置 -->
+    <bean id="myScheduler" lazy-init="false" autowire="no" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+    	<property name="triggers">
+    		<list>
+    			<ref bean="cronMonitorValueTrigger" />
+    		</list>
+    	</property>
+    	<property name="quartzProperties">
+    		<props>
+    			<prop key="org.quartz.threadPool.threadCount">1</prop>
+    			<prop key="org.quartz.scheduler.instanceId">AUTO</prop>
+    		</props>
+    	</property>
+    </bean>
 </beans>
