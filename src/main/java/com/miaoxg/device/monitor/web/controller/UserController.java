@@ -13,10 +13,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.miaoxg.device.monitor.core.Role;
 import com.miaoxg.device.monitor.entity.User;
 import com.miaoxg.device.monitor.service.UserService;
 import com.miaoxg.device.monitor.util.JsonUtils;
+import com.miaoxg.device.monitor.vo.DataTablesVo;
 
 @RestController
 public class UserController extends AbstractController{
@@ -68,9 +68,9 @@ public class UserController extends AbstractController{
         param.put("offset", iDisplayStart);
         param.put("limit", iDisplayLength);
 
-        Object[] resultArr = userService.getListAndTotalCount(param);
-        int count = (int)resultArr[0];
-        List<User> userList = (List<User>)resultArr[1];
+        DataTablesVo<User> users = userService.getListAndTotalCount(param);
+        int count = users.getCount();
+        List<User> userList = users.getList();
         // 封装返回参数
         return JsonUtils.toDatatablesJson(count, count, sEcho, userList);
     }

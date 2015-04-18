@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.miaoxg.device.monitor.core.ServiceException;
 import com.miaoxg.device.monitor.dao.UserDao;
 import com.miaoxg.device.monitor.entity.User;
+import com.miaoxg.device.monitor.vo.DataTablesVo;
 
 @Service
 @Transactional
@@ -21,10 +22,10 @@ public class UserService {
     /**
      * 分页查询符合记录的用户、符合条件的用户总数
      */
-    public Object[] getListAndTotalCount(Map<String, Object> param){
+    public DataTablesVo<User> getListAndTotalCount(Map<String, Object> param){
         int count = userDao.selectCount(param);                 // 符合条件的记录总数
         List<User> userList = userDao.selectList(param);  
-        return new Object[]{count, userList};
+        return new DataTablesVo<User>(count, userList);
     }
     
     /**
