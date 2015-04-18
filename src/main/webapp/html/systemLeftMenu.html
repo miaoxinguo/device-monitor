@@ -1,0 +1,29 @@
+<div class="list-group">
+  <a id="devicePage" href="javascript:void(0)" class="list-group-item active">设备管理</a>
+  <a id="hotelPage" href="javascript:void(0)" class="list-group-item">酒店管理</a>
+  <a id="userPage" href="javascript:void(0)" class="list-group-item">用户管理</a>
+</div>
+
+<script type="text/javascript">
+	
+//加载设备页
+$("#devicePage").click(function(){
+	loadPage("device.html");
+	$("#leftMenu a.active").removeClass("active");
+	$(this).addClass("active");
+});
+
+//加载设备页
+$("#hotelPage").click(function(){
+	loadPage("hotel.html");
+	$("#leftMenu a.active").removeClass("active");
+	$(this).addClass("active");
+});
+
+//加载用户页
+$("#userPage").click(function(){
+	loadPage("user.html");
+	$("#leftMenu a.active").removeClass("active");
+	$(this).addClass("active");
+});
+</script>
