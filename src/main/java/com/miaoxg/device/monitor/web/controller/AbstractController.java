@@ -6,11 +6,13 @@ import java.util.Date;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.dao.DataAccessException;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.miaoxg.device.monitor.core.ServiceException;
 import com.miaoxg.device.monitor.util.JsonUtils;
 
 /**
@@ -38,9 +40,26 @@ public class AbstractController {
     /**
      * 全局异常处理，返回前台错误信息
      */
-    @ExceptionHandler(RuntimeException.class)
-    protected @ResponseBody String runtimeExceptionHandler(RuntimeException e){
-        logger.error("", e);
+    @ExceptionHandler(DataAccessException.class)
+    protected @ResponseBody String dataAccessExceptionHandler(DataAccessException e){
+        logger.error("数据访问异常", e);
+        return JsonUtils.toFailureJson("系统处理失败，请稍后再试");
+    }
+    
+    /**
+     * 服务层异常处理，返回前台错误信息
+     */
+    @ExceptionHandler(ServiceException.class)
+    protected @ResponseBody String serviceExceptionHandler(ServiceException e){
+        return JsonUtils.toFailureJson(e.getMessage());
+    }
+    
+    /**
+     * 全局异常处理，返回前台错误信息
+     */
+    @ExceptionHandler(Exception.class)
+    protected @ResponseBody String exceptionHandler(Exception e){
+        logger.error("系统异常", e);
         return JsonUtils.toFailureJson(e.getMessage());
     }
 }
