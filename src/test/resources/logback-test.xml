@@ -7,9 +7,8 @@
 		</encoder>
 	</appender>
 
-	<logger name="org.hibernate" level="WARN" />
-	<logger name="org.jboss" level="WARN" />
 	<logger name="org.springframework" level="INFO" />
+	<logger name="org.quartz" level="WARN" />
 	
 	<root level="DEBUG">
 		<appender-ref ref="STDOUT" />

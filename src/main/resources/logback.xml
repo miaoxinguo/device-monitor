@@ -33,8 +33,9 @@
 		</triggeringPolicy>
 	</appender>
 
-	<!--myibatis log configure -->
-	<logger name="com.apache.ibatis" level="INFO" />
+	<!-- log configure -->
+	<logger name="org.springframework" level="INFO" />
+	<logger name="org.quartz" level="WARN" />
 
 	<!-- 日志输出级别 -->
 	<root level="INFO">
