@@ -5,13 +5,13 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SimplePropertyPreFilter;
 
 /**
  * 按约定封装后台返回前台的数据
  * 
  * @author miaoxinguo2002@gmail.com
- * @version orange 2013-5-22
  */
 public class JsonUtils {
 
@@ -90,7 +90,7 @@ public class JsonUtils {
         if(StringUtils.isBlank(msg)){
             return toSuccessJson();
         }
-        return "{\"success\":true,\"msg\":"+msg+"}";
+        return "{\"success\":true,\"msg\":\""+msg+"\"}";
     }
     
     /**
@@ -105,5 +105,17 @@ public class JsonUtils {
      */
     public static String toFailureJson(final String msg){
         return "{\"success\":false,\"msg\":\""+msg+"\"}";
+    }
+    
+    /**
+     * 返回datables表格控件需要的格式
+     */
+    public static String toDatatablesJson(int iTotalRecords, int iTotalDisplayRecords, String sEcho, List<?> list){
+        JSONObject obj = new JSONObject();
+        obj.put("iTotalRecords", iTotalRecords);             // 数据库表中记录数
+        obj.put("iTotalDisplayRecords", iTotalDisplayRecords); // 查询条件顾虑后的记录数
+        obj.put("sEcho", sEcho);
+        obj.put("aaData", list);
+        return obj.toJSONString();
     }
 }
