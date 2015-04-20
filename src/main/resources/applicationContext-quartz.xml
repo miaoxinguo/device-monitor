@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context" 
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd 
+   	 	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!-- quartz自动任务 - 定时获取设备监测值 -->
+    <bean id="getMonitorValueJob" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+    	<property name="jobClass" value="com.miaoxg.device.monitor.scheduler.GetMonitorValueJob" />
+    </bean>
+    <bean id="cronMonitorValueTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+    	<property name="jobDetail" ref="getMonitorValueJob"/>
+    	<property name="cronExpression" value="0/30 * * * * ?" />  <!-- 每30秒执行一次 -->
+    </bean>
+    
+    <!-- quartz自动任务 - 调度设置 -->
+    <bean id="myScheduler" lazy-init="false" autowire="no" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+    	<property name="triggers">
+    		<list>
+    			<ref bean="cronMonitorValueTrigger" />
+    		</list>
+    	</property>
+    	<property name="quartzProperties">
+    		<props>
+    			<prop key="org.quartz.threadPool.threadCount">1</prop>
+    			<prop key="org.quartz.scheduler.instanceId">AUTO</prop>
+    		</props>
+    	</property>
+    </bean>
+</beans>

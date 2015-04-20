@@ -10,7 +10,7 @@
 	<!-- Spring上下文、监听设置 -->
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
-		<param-value>classpath:applicationContext.xml</param-value>
+		<param-value>classpath:applicationContext*.xml</param-value>
 	</context-param>
 	<listener>
 		<listener-class>com.miaoxg.device.monitor.core.Init</listener-class>
