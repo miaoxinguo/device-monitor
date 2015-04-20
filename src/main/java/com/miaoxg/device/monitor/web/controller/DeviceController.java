@@ -57,7 +57,7 @@ public class DeviceController extends AbstractController{
         obj.put("iTotalRecords", devList.size());   // 数据库表中记录数
         obj.put("iTotalDisplayRecords", devList.size());   // 查询条件顾虑后的记录数
         obj.put("sEcho", sEcho);
-        obj.put("aaData", deviceService.getRemoteDeviceInfo(devList));
+        obj.put("aaData", "");
         return obj.toJSONString();
     }
     

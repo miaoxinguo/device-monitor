@@ -18,17 +18,26 @@ public class Init extends ContextLoaderListener{
     
     @Override
     public void contextInitialized(ServletContextEvent event) {
-        logger.info("initialized");
+        logger.debug("initialized");
+        
         // 启动容器
         super.contextInitialized(event);
+        
+        // 加载监测值缓存
+        logger.info("加载设备缓存...");
+        try{
+            MonitorValueCache.INSTANCE.load();
+        }catch(Exception e){
+            logger.error("加载设备缓存异常, 系统启动失败", e);
+            System.exit(1);
+        }
     }
 
     @Override
     public void contextDestroyed(ServletContextEvent event) {
-        logger.info("destroyed");
+        logger.debug("destroyed");
         // 关闭容器
         super.contextDestroyed(event);
     }
-    
     
 }

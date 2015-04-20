@@ -6,16 +6,26 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.stereotype.Service;
+import javax.annotation.Resource;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.miaoxg.device.monitor.core.Constants;
+import com.miaoxg.device.monitor.core.MonitorValueCache;
+import com.miaoxg.device.monitor.dao.DeviceDao;
+import com.miaoxg.device.monitor.entity.MonitorValue;
 
 @Service
+@Transactional
 public class DeviceService {
+    private final static Logger logger = LoggerFactory.getLogger(DeviceService.class);
+    
     private final String FLAG_OFFLINE       = "&1";
     private final String FLAG_ID            = "&A";
     private final String FLAG_NAME          = "&U";       // 设备名
@@ -25,12 +35,35 @@ public class DeviceService {
     private final String FLAG_NH3           = "&E";       // NH3
     private final String FLAG_IS_OPEN       = "&H";       // 是否开机
     private final String DEVICE_CLOSED      = "0";        // 关机
-     
+    
+    @Resource
+    private DeviceDao deviceDao;
+    
     /**
-     * 创建连接
+     * 修改设备名并推动到平台
      */
-    public DatagramSocket createClient() {
-        // 创建客户端
+    public void rename(String deviceId, String newName) {
+        
+    }
+    
+    /**
+     * 根据酒店标识从本地缓存获取设备的监测数据
+     */
+    public List<MonitorValue> getMonitorValueByHotel(Integer hotelId) {
+        return null;
+    }
+    
+    /**
+     * 从从平台获取监测数值，存入数据库和缓存
+     */
+    public void getRemoteMonitorValue() {
+        /*
+         *  创建socket客户端
+         *  
+         *  现在的问题是： 平台不支持多线程, 且每一次socket通信都很慢，如果设备多，必然超过前台页面刷新周期（30s）
+         *  
+         *  TODO 平台必须提供批量查询或支持多线程，按平台接口修改方法
+         */
         DatagramSocket client = null;
         try {
             client = new DatagramSocket();
@@ -38,14 +71,7 @@ public class DeviceService {
         } catch (SocketException e) {
            throw new RuntimeException("连接服务器失败");
         }
-        return client;
-    }
-    
-    /**
-     * 根据设备编号从中心服务器获取该设备的数据
-     */
-    public void getRemoteDeviceInfo(String deviceId) {
-        DatagramSocket client = createClient();
+        
         // 构造地址
         InetAddress addr = null;
         try {
@@ -55,124 +81,84 @@ public class DeviceService {
             throw new RuntimeException("连接服务器失败");
         }
         
-        String sendStr = "LNGNUM&" + deviceId;
-        byte[] sendBuf = sendStr.getBytes();
-        DatagramPacket sendPacket = new DatagramPacket(sendBuf ,sendBuf.length , addr , Constants.SERVER_PORT);
+        // 从平台获取数据，存入 数据库 和缓存
+        List<MonitorValue> tempList = new ArrayList<MonitorValue>();
         
-        
-        DatagramPacket recvPacket = null;
-        try {
-            client.send(sendPacket);
-            byte[] recvBuf = new byte[1024];
-            recvPacket = new DatagramPacket(recvBuf , recvBuf.length);
-            client.receive(recvPacket);
-        } catch (IOException e) {
-            // ingore
-            e.printStackTrace();
-        }
-        
-        String recvStr = new String(recvPacket.getData() , 0, recvPacket.getLength());
-        System.out.println("收到:" + recvStr);
-        client.close();
-    }
-    
-    /**
-     * 批量获取信息
-     */
-    public JSONArray getRemoteDeviceInfo(List<String> deviceList) {
-        DatagramSocket client = createClient();
-        // 构造地址
-        InetAddress addr = null;
-        try {
-            addr = InetAddress.getByName(Constants.SERVER_IP);
-        } catch (UnknownHostException e) {
-            client.close();
-            throw new RuntimeException("连接服务器失败");
-        }
-        
-        // 获取并封装数据
-        JSONArray arr = new JSONArray();
-        for(String devId : deviceList){
+        // 在缓存中取到所有的设备标识
+        for(String devId : MonitorValueCache.INSTANCE.getAllDeviceId()){
             byte[] request = ("LNGNUM&" + devId).getBytes();
-            DatagramPacket sendPacket = new DatagramPacket(request, request.length, addr , Constants.SERVER_PORT);
+            DatagramPacket sendPacket = new DatagramPacket(request, request.length, addr, Constants.SERVER_PORT);
             try {
                 client.send(sendPacket);
             
-                byte[] recvBuf = new byte[1024];
+                byte[] recvBuf = new byte[256];
                 DatagramPacket recvPacket = new DatagramPacket(recvBuf , recvBuf.length);
                 client.receive(recvPacket);
-                String recvStr = new String(recvPacket.getData() , 0, recvPacket.getLength());
+                String recvStr = new String(recvPacket.getData(), 0, recvPacket.getLength());
                 
-                //System.out.println("收到:" + recvStr);
-                arr.add(analyzeMessage(recvStr));
-            } catch (IOException e) {
-                // ingore
-                e.printStackTrace();
+                logger.debug("收到:{}", recvStr);
+                MonitorValue obj = analyzeMessage(recvStr);
+                tempList.add(obj);
+            } 
+            catch (IOException e) {
+                // 获取某设备监测值失败，继续处理下一设备
+                logger.error("获取设备：{}监测值失败", devId, e);
+                continue;
             } 
         }
         client.close();
-        return arr;
-    }
-    
-    /**
-     * 修改设备名并推动到中心服务器
-     */
-    public void rename(String deviceId, String newName) throws IOException {
         
+        // 存入数据库
+        deviceDao.insertMonitorValue(tempList);
+        
+        ///TODO 同步到缓存
+        MonitorValueCache.values();
     }
     
     /**
-     * 解析服务器返回的数据，封装为一个json对象
+     * 解析服务器返回的数据
      */
-    private JSONObject analyzeMessage(String msg) {
-        JSONObject obj = new JSONObject();
+    private MonitorValue analyzeMessage(String msg) {
+        MonitorValue obj = new MonitorValue();
         
         // id
         int idBeginIndex = msg.indexOf(FLAG_ID)+3;
-        obj.put("id", msg.substring(idBeginIndex, msg.indexOf("&", idBeginIndex)));
+        obj.setDeviceSid(msg.substring(idBeginIndex, msg.indexOf("&", idBeginIndex)));
         
         // 设备名默认设为id
-        obj.put("devname", obj.getString("id")); 
+        obj.setDeviceName(obj.getDeviceSid());
         
-        // status 在线or离线
-        boolean isOffLine = msg.contains(FLAG_OFFLINE);
-        obj.put("status", isOffLine ? "离线" : "在线");
+        // 是否在线
+        obj.setOnLine(!msg.contains(FLAG_OFFLINE));
         
         // 如果在线，继续封装信息
-        if(!isOffLine){
+        if(obj.isOnLine()){
             // 设备名
             if(msg.contains(FLAG_NAME)){
                 int nameBeginIndex = msg.indexOf(FLAG_NAME) + 3;
-                obj.put("devname", msg.substring(nameBeginIndex, msg.indexOf("&", nameBeginIndex)));
+                obj.setDeviceName(msg.substring(nameBeginIndex, msg.indexOf("&", nameBeginIndex)));
             }
             
             // 温度
             int temperatureBeginIndex = msg.indexOf(FLAG_TEMPERATURE) + 3;
-            obj.put("temperature", msg.substring(temperatureBeginIndex, msg.indexOf("&", temperatureBeginIndex)));
+            obj.setTemperature(Float.valueOf( msg.substring(temperatureBeginIndex, msg.indexOf("&", temperatureBeginIndex))));
             
             // 湿度
             int humidityBeginIndex = msg.indexOf(FLAG_HUMIDITY) + 3;
-            obj.put("humidity", msg.substring(humidityBeginIndex, msg.indexOf("&", humidityBeginIndex)));
+            obj.setHumidity(Float.valueOf(msg.substring(humidityBeginIndex, msg.indexOf("&", humidityBeginIndex))));
             
             // CO2
             int co2BeginIndex = msg.indexOf(FLAG_CO2) + 3;
-            obj.put("co2", msg.substring(co2BeginIndex, msg.indexOf("&", co2BeginIndex)));
+            obj.setCo2(Float.valueOf(msg.substring(co2BeginIndex, msg.indexOf("&", co2BeginIndex))));
             
             // NH3
             int nh3BeginIndex = msg.indexOf(FLAG_NH3) + 3;
-            obj.put("nh3", msg.substring(nh3BeginIndex, msg.indexOf("&", nh3BeginIndex)));
+            obj.setNh3(Float.valueOf(msg.substring(nh3BeginIndex, msg.indexOf("&", nh3BeginIndex))));
             
             // 开机/关机
             int isOpenBeginIndex = msg.indexOf(FLAG_IS_OPEN) + 3;
             String isDeviceClosed = msg.substring(isOpenBeginIndex, msg.indexOf("&", isOpenBeginIndex));
-            obj.put("isOpen", DEVICE_CLOSED.equals(isDeviceClosed)? "关": "开");
-        }
-        else{ //设置默认值
-            obj.put("temperature", "-");
-            obj.put("humidity", "-");
-            obj.put("co2", "-");
-            obj.put("nh3", "-");
-            obj.put("isOpen", "-");
+            obj.setOpen(!DEVICE_CLOSED.equals(isDeviceClosed));
         }
         
         return obj;
