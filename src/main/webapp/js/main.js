@@ -3,7 +3,15 @@ $(document).ready(function(){
 	$.ajaxSetup({
 		dataType: 'json',
 		cache: false,
-		contentType: "application/x-www-form-urlencoded;charset=utf-8"
+		contentType: "application/x-www-form-urlencoded;charset=utf-8",
+		dataFilter: function(data, type){
+			if("json|html".indexOf(type) > -1 && data == "timeout"){
+				alert("已过期，请重新登录！");
+				window.location.href = 'login.html';
+				return;
+			}
+			return data;
+		}
 	});
 	
 	// 根据用户角色，控制要显示的菜单
