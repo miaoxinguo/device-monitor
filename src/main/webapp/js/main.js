@@ -1,4 +1,11 @@
 $(document).ready(function(){
+	// ajax全局设置
+	$.ajaxSetup({
+		dataType: 'json',
+		cache: false,
+		contentType: "application/x-www-form-urlencoded;charset=utf-8"
+	});
+	
 	// 根据用户角色，控制要显示的菜单
 	$.ajax({
 		url: "role",
