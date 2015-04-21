@@ -28,7 +28,7 @@ $("#homePage").click(function(){
 	$("#contentContainer #content").removeClass("col-md-10").addClass("col-md-12");
 	
 	// 加载首页 设备指标页
-	loadPage("deviceStatus.html");
+	loadPage("monitorValue.html");
 	
 	$("#navbar li.active").removeClass("active");
 	$(this).parent().addClass("active");

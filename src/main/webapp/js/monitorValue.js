@@ -2,7 +2,7 @@ var id_of_clearInterval;
 
 $(document).ready(function(){
 	// 表格
-	var t = $("#deviceStatusTable").dataTable({
+	var t = $("#monitorValueTable").dataTable({
 		"bPaginate": true,
 		"bLengthChange": false, 			//改变每页显示数据数量
 		'iDisplayLength':50, 				//每页显示记录数
@@ -10,7 +10,7 @@ $(document).ready(function(){
 		"bFilter": false, 					//过滤功能
 	    //"bProcessing": true,                    //加载数据时显示正在加载信息   
 	    "bServerSide": true,                    //指定从服务器端获取数据   
-	    "sAjaxSource": "deviceStatus",	//获取数据的url 
+	    "sAjaxSource": "monitorValue",	//获取数据的url 
 	    "fnServerData": function (sSource, aoData, fnCallback) {
 	    	$.ajax( {
 		    	"dataType": 'json',
@@ -40,7 +40,7 @@ $(document).ready(function(){
 // 每隔30s自动刷新
 function refresh(){
 	$("#loading").show();
-	$("#deviceStatusTable").DataTable().draw();   // 取表格对象 刷新
+	$("#monitorValueTable").DataTable().draw();   // 取表格对象 刷新
 }
 
 // 事件 - 酒店下拉选择
@@ -48,7 +48,7 @@ $("#hotelList").change(function(){
 	$("#loading").show();
 	//$(this).children("option[value='-1']").remove();
 	//console.log($(this).children('option:selected').val());
-	$("#deviceStatusTable").DataTable().draw();   // 取表格对象 刷新
+	$("#monitorValueTable").DataTable().draw();   // 取表格对象 刷新
 	
 	clearInterval(id_of_clearInterval);
 	id_of_clearInterval = setInterval(refresh, 30000);
@@ -71,12 +71,12 @@ $("#btnModalList").click(function(){
 
 
 // 事件 - 表格加载后触发，用于绘制模块视图
-$('#deviceStatusTable').DataTable().on( 'draw', function () {
+$('#monitorValueTable').DataTable().on( 'draw', function () {
 	// 数据加载完成后设置图标不显示
 	$("#loading").hide();
 	
 	$("#modal_div").html("");
-    var total = $('#deviceStatusTable tbody tr').size();
+    var total = $('#monitorValueTable tbody tr').size();
     var rowSize = 6;   // 每行6个
     // 共多少行
     for(var i=0; i<total/rowSize; i++){
@@ -91,7 +91,7 @@ $('#deviceStatusTable').DataTable().on( 'draw', function () {
         	$("#template_div .col-md-2").clone().appendTo($(this));
 
         	// 从表中的第i行取数据
-        	var $tr = $('#deviceStatusTable tbody tr:eq('+ i +')')
+        	var $tr = $('#monitorValueTable tbody tr:eq('+ i +')')
         	
         	// 取最新添加的视块
         	var $modalDiv = $(this).children(":last");
