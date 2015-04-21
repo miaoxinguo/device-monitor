@@ -28,7 +28,7 @@ public class DeviceDao extends BaseDao {
                 + "values(?, ?, ?, ?, ?, ?, ?, ?)";
         
         // TODO 同步时间在这里取服务器时间，最准确的时间应该是服务器返回
-        String syncTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss"));
+        String syncTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         
         List<Object[]> params = new ArrayList<Object[]>();
         for(MonitorValue mv : list){
