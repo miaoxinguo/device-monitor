@@ -45,19 +45,23 @@
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
             <li class="active"><a id="homePage" href="javascript:void(0)">首页</a></li>
-            <li><a id="devicePage" href="javascript:void(0)">设备管理</a></li>
-            <li><a id="userPage" href="javascript:void(0)">用户管理</a></li>
-          </ul>
+            <li><a id="reportPage" href="javascript:void(0)">统计报表</a></li>
+            <li><a id="systemPage" href="javascript:void(0)">系统管理</a></li>
+		  </ul>
           <ul class="nav navbar-nav navbar-right">
-            <li><a href="login.html">退出</a></li>
+          	  <li><a href="html/setting.html">修改密码</a></li>
+              <li><a href="login.html">退出</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
     </nav>
 
 	<!-- 内容区 -->
-	<div id="content" class="container">
-
+	<div id="contentContainer" class="container">
+		<div class="row">
+			<div id="leftMenu"></div>
+			<div id="content" class="col-md-12"></div>
+		</div>
 	</div>
 </body>
 <script type="text/javascript" src="media/js/jquery.js"></script>
