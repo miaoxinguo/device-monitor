@@ -2,6 +2,9 @@ package com.miaoxg.device.monitor.core;
 
 import javax.servlet.ServletContextEvent;
 
+import org.quartz.JobKey;
+import org.quartz.SchedulerException;
+import org.quartz.impl.StdScheduler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.ContextLoaderListener;
@@ -30,6 +33,15 @@ public class Init extends ContextLoaderListener{
         }catch(Exception e){
             logger.error("加载设备缓存异常, 系统启动失败", e);
             System.exit(1);
+        }
+        
+        // 容器启动后，立即执行一次获取检测值的任务
+        StdScheduler myScheduler = ApplicationContextHolder.getBean("myScheduler", StdScheduler.class);
+        JobKey jobKey = new JobKey("getMonitorValueJob");
+        try {
+            myScheduler.triggerJob(jobKey);
+        } catch (SchedulerException e) {
+            logger.error("执行任务失败");
         }
     }
 
