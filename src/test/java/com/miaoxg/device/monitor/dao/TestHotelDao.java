@@ -1,21 +1,27 @@
-package com.miaoxg.device.monitor.service;
+package com.miaoxg.device.monitor.dao;
+
+import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.miaoxg.device.monitor.entity.Hotel;
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={"classpath:applicationContext.xml"})
-public class TestDeviceService {
+public class TestHotelDao {
     @Resource
-    private DeviceService deviceService;
+    private HotelDao hotelDao;
     
     @Test
-    public void testgetRemoteMonitorValue() throws Exception{
-        //deviceService.getRemoteMonitorValue();  // 从平台去数据 并存入数据库和缓存
+    public void testSelectHotelNames(){
+        // 构造测试数据
+        List<Hotel> list = hotelDao.selectHotelByUser(3);
+        Assert.assertNotNull(list);
     }
 }
-

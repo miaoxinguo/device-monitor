@@ -7,6 +7,7 @@ import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.miaoxg.device.monitor.vo.MonitorValueVo;
 import com.miaoxg.device.monitor.web.controller.DeviceController;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -17,7 +18,9 @@ public class TestDeviceController {
     private DeviceController deviceController;
     
     @Test
-    public void testGetDeviceStatus(){
-        System.out.println(deviceController.getDeviceStatus("1", null));
+    public void testGetMonitorValue(){
+        MonitorValueVo vo = new MonitorValueVo();
+        vo.setHotelId(1);
+        System.out.println(deviceController.getMonitorValues(vo, null));
     }
 }
