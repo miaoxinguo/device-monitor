@@ -1,39 +1,57 @@
 var id_of_clearInterval;
 
 $(document).ready(function(){
-	// 表格
-	var t = $("#monitorValueTable").dataTable({
+	//表格
+	$("#monitorValueTable").dataTable({
 		"bPaginate": true,
 		"bLengthChange": false, 			//改变每页显示数据数量
-		'iDisplayLength':50, 				//每页显示记录数
+		'iDisplayLength': 2, 				//每页显示记录数
 		"bSort": false,						//排序
 		"bFilter": false, 					//过滤功能
 	    //"bProcessing": true,                    //加载数据时显示正在加载信息   
 	    "bServerSide": true,                    //指定从服务器端获取数据   
-	    "sAjaxSource": "monitorValue",	//获取数据的url 
+	    "sAjaxSource": "monitorValues",	//获取数据的url 
 	    "fnServerData": function (sSource, aoData, fnCallback) {
 	    	$.ajax( {
 		    	"dataType": 'json',
 		    	"type": "get",
 		    	"url": sSource+"?hotelId="+$("#hotelList").children('option:selected').val(),
+		    	"data": aoData,
 		    	"success": fnCallback
 	    	});
-    	},
-	    "aoColumns": [   {"mDataProp":"id"},  
-	                     {"mDataProp":"devname"},
-	                     {"mDataProp":"status"},
-	                     {"mDataProp":"isOpen"},
-	                     {"mDataProp":"temperature"},
-	                     {"mDataProp":"humidity"},
-	                     {"mDataProp":"co2"},
-	                     {"mDataProp":"nh3"}],  // 与后台返回属性一致
+		},
+	    "aoColumns": [{"mData":"deviceSid"},  
+		              {"mData":"deviceName"},
+		              {"mData":"onLine", "fnCreatedCell": function (nTd, sData, oData, iRow, iCol) {
+		                  $(nTd).text(sData ? '在线':'离线');
+		              }},
+		              {"mData":"open", "fnCreatedCell": function (nTd, sData, oData, iRow, iCol) {
+		            	  $(nTd).text(sData ? '开':'关');
+		              }},
+		              {"mData":"temperature"},
+		              {"mData":"humidity"},
+		              {"mData":"co2"},
+		              {"mData":"nh3"}],  // 与后台返回属性一致
 	    //"bFilter": false,                       //不使用过滤功能     
 	    "sPaginationType": "full_numbers",      //翻页界面类型   
 	    "oLanguage": {                          //国际化   
 	    	"sUrl": "media/i18n/zh_CN.txt"   
 	    }   
 	});
+
+	// 加载酒店下拉框内容
+	$.get("hotelNames", function(data){
+		var $hotelSelect = $("#hotelList");
+		for(var index in data){
+			console.log(data[index].id, data[index].name);
+			var option = "<option value='"+ data[index].id +"'>"+ data[index].name +"</option>"
+			$hotelSelect.append(option);
+		}
+		//$hotelSelect.children("option:eq(0)").attr("selected",true);
+		//$hotelSelect.change();
+	});
 	
+	// 定时刷新数据
 	id_of_clearInterval = setInterval(refresh, 30000);
 });
 
@@ -68,7 +86,6 @@ $("#btnModalList").click(function(){
 	$(this).removeClass("btn-deauft").addClass("btn-primary");
 	$("#btnModalDiv").removeClass("btn-primary").addClass("btn-deauft");
 });
-
 
 // 事件 - 表格加载后触发，用于绘制模块视图
 $('#monitorValueTable').DataTable().on( 'draw', function () {
