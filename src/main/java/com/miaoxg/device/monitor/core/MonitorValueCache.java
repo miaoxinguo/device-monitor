@@ -1,5 +1,6 @@
 package com.miaoxg.device.monitor.core;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,10 +16,6 @@ import com.miaoxg.device.monitor.entity.MonitorValue;
  */
 public enum MonitorValueCache {
     INSTANCE;
-    
-    private MonitorValueCache(){
-        // ingore
-    }
     
     /**
      * Map&lt;设备编号, 设备最新的监测值>
@@ -37,11 +34,46 @@ public enum MonitorValueCache {
      * 系统启动时从数据库加载所有设备编号，并立即获取监测值
      */
     public void load(){
-        // 从数据库中加载
+        // 从数据库中加载设备编号
         DeviceDao deviceDao = ApplicationContextHolder.getBean("deviceDao", DeviceDao.class);
         List<String> list = deviceDao.selectAllDeviceSid();
         for(String devSid : list){
             cache.put(devSid, null);
         }
+    }
+    
+    /**
+     * 更新一条缓存记录
+     */
+    public void update(String deviceSid, MonitorValue mv) {
+        cache.put(deviceSid, mv);
+    }
+    
+    /**
+     * 更新多条缓存记录
+     */
+    public void update(List<MonitorValue> list) {
+        for(MonitorValue mv : list){
+            cache.put(mv.getDeviceSid(), mv);
+        }
+    }
+    
+    /**
+     * 获取一条记录
+     */
+    public MonitorValue get(String deviceSid){
+        return cache.get(deviceSid);
+    }
+    
+    /**
+     * 获取记录, 不负责分页部分
+     */
+    public List<MonitorValue> get(List<String> deviceSids){
+        // 返回需要的
+        List<MonitorValue> returnList = new ArrayList<MonitorValue>();
+        for(String sid : deviceSids){
+            returnList.add(cache.get(sid));
+        }
+        return returnList;
     }
 }
