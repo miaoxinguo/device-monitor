@@ -5,13 +5,14 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.miaoxg.device.monitor.dao.DeviceDao;
 import com.miaoxg.device.monitor.entity.MonitorValue;
+import com.miaoxg.device.monitor.vo.MonitorValueVo;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={"classpath:applicationContext.xml"})
@@ -34,5 +35,19 @@ public class TestDeviceDao {
             list.add(mv);
         }
         deviceDao.insertMonitorValue(list);
+    }
+    
+    @Test
+    public void testSelectDevice(){
+        // 构造测试数据
+        MonitorValueVo vo = new MonitorValueVo();
+        vo.setHotelId(1);
+        vo.setRoom("6");
+        vo.setiDisplayStart(0);
+        vo.setiDisplayLength(10);
+        
+        List<String> sids = deviceDao.selectDeviceSidByHotel(vo);
+        System.out.println(sids.size());
+        Assert.assertTrue(sids.size() >= 0);
     }
 }

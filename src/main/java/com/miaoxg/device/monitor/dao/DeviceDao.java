@@ -5,6 +5,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import com.miaoxg.device.monitor.entity.MonitorValue;
@@ -13,46 +16,94 @@ import com.miaoxg.device.monitor.vo.MonitorValueVo;
 @Repository
 public class DeviceDao extends BaseDao {
     
+    private static final Logger logger = LoggerFactory.getLogger(DeviceDao.class);
+    
     /**
      * 分页查询某酒店的所有设备, 如果没有指定酒店id, 抛异常
      */
     public List<String> selectDeviceSidByHotel(MonitorValueVo vo){
-        String sql = "select d.sid from device d where d.hotel_id = ? limit ?, ?";
-        Object[] params = {vo.getHotelId(), vo.getiDisplayStart(), vo.getiDisplayLength()};
-        return getJdbcTemplate().queryForList(sql, String.class, params);
+        StringBuffer sql = new StringBuffer("select sid from device where hotel_id = ?");
+        if(StringUtils.isNotBlank(vo.getRoom())){
+            sql.append(" and room like ?");
+        }
+        sql.append(" limit ?, ?");
+        
+        List<Object> params = new ArrayList<Object>();
+        params.add(vo.getHotelId());
+        if(StringUtils.isNotBlank(vo.getRoom())){
+            params.add("%" + vo.getRoom() + "%");
+        }
+        params.add(vo.getiDisplayStart());
+        params.add(vo.getiDisplayLength());
+        logger.debug("准备执行的sql: {}", sql.toString());
+        logger.debug("参数:{}", params);
+        return getJdbcTemplate().queryForList(sql.toString(), String.class, params.toArray());
     }
     
     /**
      * 查询某酒店的所有设备数量
      */
     public int selectDeviceCountByHotel(MonitorValueVo vo){
-        String sql = "select count(*) from device d where d.hotel_id = ? ";
-        return getJdbcTemplate().queryForObject(sql, Integer.class, vo.getHotelId());
+        StringBuffer sql = new StringBuffer("select count(*) from device d where d.hotel_id = ? ");
+        if(StringUtils.isNotBlank(vo.getRoom())){
+            sql.append(" and d.room = ? ");
+        }
+        
+        List<Object> params = new ArrayList<Object>();
+        params.add(vo.getHotelId());
+        if(StringUtils.isNotBlank(vo.getRoom())){
+            params.add(vo.getRoom());
+        }
+        return getJdbcTemplate().queryForObject(sql.toString(), Integer.class, params.toArray());
     }
     
     /**
      * 查询某用户（不含管理员）所有酒店所有设备的编号
      */
     public List<String> selectDeviceSidByUser(MonitorValueVo vo){
-        String sql = "SELECT d.sid from device d "
+        StringBuffer sql = new StringBuffer("SELECT d.sid from device d "
                 + "left join hotel h on d.hotel_id=h.id "
                 + "left join user_hotel on h.id=user_hotel.hotel_id "
                 + "left join user on user_hotel.user_id=user.id "
-                + "where user_id=? limit ?, ?";
-        Object[] params = {vo.getUserId(), vo.getiDisplayStart(), vo.getiDisplayLength()};
-        return getJdbcTemplate().queryForList(sql, String.class, params);
+                + "where user_id=?");
+        if(StringUtils.isNotBlank(vo.getRoom())){
+            sql.append(" and room like ?");
+        }
+        sql.append(" limit ?, ?");
+        
+        List<Object> params = new ArrayList<Object>();
+        params.add(vo.getUserId());
+        if(StringUtils.isNotBlank(vo.getRoom())){
+            params.add("%" + vo.getRoom() + "%");
+        }
+        params.add(vo.getiDisplayStart());
+        params.add(vo.getiDisplayLength());
+        logger.debug("准备执行的sql: {}", sql.toString());
+        logger.debug("参数:{}", params);
+        return getJdbcTemplate().queryForList(sql.toString(), String.class, params.toArray());
     }
     
     /**
      * 查询某用户（不含管理员）所有酒店所有设备的数量
      */
     public int selectDeviceCountByUser(MonitorValueVo vo){
-        String sql = "SELECT count(*) from device d "
+        StringBuffer sql = new StringBuffer("SELECT count(*) from device d "
                 + "left join hotel h on d.hotel_id=h.id "
                 + "left join user_hotel on h.id=user_hotel.hotel_id "
                 + "left join user on user_hotel.user_id=user.id "
-                + "where user_id=? ";
-        return getJdbcTemplate().queryForObject(sql, Integer.class, vo.getUserId());
+                + "where user_id=?");
+        if(StringUtils.isNotBlank(vo.getRoom())){
+            sql.append(" and room like ?");
+        }
+        
+        List<Object> params = new ArrayList<Object>();
+        params.add(vo.getUserId());
+        if(StringUtils.isNotBlank(vo.getRoom())){
+            params.add("%" + vo.getRoom() + "%");
+        }
+        logger.debug("准备执行的sql: {}", sql.toString());
+        logger.debug("参数:{}", params);
+        return getJdbcTemplate().queryForObject(sql.toString(), Integer.class, params.toArray());
     }
     
     /**

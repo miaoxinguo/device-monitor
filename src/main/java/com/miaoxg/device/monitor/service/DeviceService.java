@@ -51,8 +51,8 @@ public class DeviceService {
         logger.debug("device count is {}", sidList.size());
         
         // 从缓存查监测值
-        List<MonitorValue> mvList = MonitorValueCache.INSTANCE.get(sidList);
-        DataTablesVo<MonitorValue> dtvo = new DataTablesVo<MonitorValue>(count, mvList);
-        return dtvo;
+        List<MonitorValue> mvList = count>0 ? MonitorValueCache.INSTANCE.get(sidList) : new ArrayList<MonitorValue>();
+        return new DataTablesVo<MonitorValue>(count, mvList);
+       
     }
 }

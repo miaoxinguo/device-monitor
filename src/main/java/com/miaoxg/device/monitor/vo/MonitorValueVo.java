@@ -8,6 +8,7 @@ package com.miaoxg.device.monitor.vo;
 public class MonitorValueVo extends Page{
     private Integer hotelId;
     private Integer userId;
+    private String room;
 
     public Integer getHotelId() {
         return hotelId;
@@ -23,5 +24,13 @@ public class MonitorValueVo extends Page{
 
     public void setUserId(Integer userId) {
         this.userId = userId;
+    }
+
+    public String getRoom() {
+        return room;
+    }
+
+    public void setRoom(String room) {
+        this.room = room;
     }
 }

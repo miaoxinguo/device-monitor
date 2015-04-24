@@ -2,16 +2,9 @@
 	li {list-style-type:none;}
 </style>
 
-<!-- 内容区 -->
-<!-- 酒店的下拉列表 -->
+<!-- 模式选择区 -->
 <div class="row row_4">
-	<div class="col-md-5">
-		选择要查看酒店：
-		<select id="hotelList">
-			<option value="0">所有</option>
-		</select>
-	</div>
-	<div class="col-md-4">
+	<div class="col-md-4 col-md-offset-4">
 		<div class="btn-group" role="group" aria-label="...">
 		  <button id="btnModalDiv" type="button" class="btn btn-primary">视块模式</button>
 		  <button id="btnModalList" type="button" class="btn btn-default">列表模式</button>
@@ -19,14 +12,42 @@
 	</div>
 </div>
 
+
+<!-- 查询区 -->
+<div id="search_div" class="row">
+
+	<!-- 酒店的下拉列表  -->
+	<div class="col-md-4">   
+		选择要查看酒店：
+		<select id="hotelList">
+			<option value="0">所有</option>
+		</select>
+	</div>
+	
+	<!-- 房间号 -->
+	<div class="col-md-4">房间号：<input id="room"></div>
+</div>
+
 <!-- loadling -->
 <div id="loading" align="center"><img src="image/loading.gif">&nbsp;&nbsp;努力加载中...</div>
 
 <!-- 设备列表 视块模式 -->
 <div id="modal_div">
+
+	<!-- 视块部分 -->
+	<div id="modal_div_content"></div>
 	
+	<!-- 分页部分-->
+	<div id="modal_div_pagination" class="row">
+		<div class="dataTables_wrapper col-md-12">
+			<div id="info_div"></div>
+			<div id="pagination_div"></div>
+		</div>
+	</div>
 </div>
 
+
+	
 <!-- 设备列表 列表模式 -->
 <div id="modal_list" hidden>
 	<div class="row">
@@ -78,20 +99,20 @@
 	
 <div id="template_div" hidden>
 	<div class="col-md-2">
-			<div class="panel">
-				<div class="panel-heading">设备</div>
-				<div class="panel-body">
-					<li>温度：<span></span>℃</li>
-					<li>湿度：<span></span>%</li>
-					<li>CO2：<span></span>%</li>
-					<li>NH3：<span></span>%</li>
-				</div>
-				<div class="panel-footer">
-					<a href="javascript:void(0)"><img width="15" height="15" src="image/z.png"></a>
-					<a href="javascript:void(0)"><img width="18" height="15" src="image/v.png"></a>
-					<a href="javascript:void(0)"><img width="16" height="15" src="image/m.png"></a>
-				</div>
+		<div class="panel">
+			<div class="panel-heading">设备</div>
+			<div class="panel-body">
+				<li>温度：<span></span>℃</li>
+				<li>湿度：<span></span>%</li>
+				<li>CO2：<span></span>%</li>
+				<li>NH3：<span></span>%</li>
+			</div>
+			<div class="panel-footer">
+				<a href="javascript:void(0)"><img width="15" height="15" src="image/z.png"></a>
+				<a href="javascript:void(0)"><img width="18" height="15" src="image/v.png"></a>
+				<a href="javascript:void(0)"><img width="16" height="15" src="image/m.png"></a>
 			</div>
 		</div>
+	</div>
 </div>
 <script type="text/javascript" src="js/monitorValue.js"></script>

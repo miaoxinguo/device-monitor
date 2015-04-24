@@ -33,7 +33,7 @@ public class DeviceController extends AbstractController{
     public String getMonitorValues(MonitorValueVo vo, HttpSession session){
         Integer hotelId = vo.getHotelId();
         logger.debug("into DeviceController.monitorValues， hotelId = {}", hotelId);
-        logger.debug("offset:{}, limit:{}", vo.getiDisplayStart(), vo.getiDisplayLength());
+        logger.debug("room:{}, offset:{}, limit:{}", vo.getRoom(), vo.getiDisplayStart(), vo.getiDisplayLength());
         
         if(null==hotelId || "".equals(hotelId)){
             hotelId = Integer.valueOf("0");

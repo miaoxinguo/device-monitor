@@ -12,12 +12,21 @@ $(document).ready(function(){
 	    "bServerSide": true,                    //指定从服务器端获取数据   
 	    "sAjaxSource": "monitorValues",	//获取数据的url 
 	    "fnServerData": function (sSource, aoData, fnCallback) {
+	    	aoData.push(
+	    		{"name": "hotelId", "value": $("#hotelList").children('option:selected').val()},
+	    		{"name": "room", "value": $("#search_div #room").val()}
+	    	);
 	    	$.ajax( {
 		    	"dataType": 'json',
 		    	"type": "get",
-		    	"url": sSource+"?hotelId="+$("#hotelList").children('option:selected').val(),
+		    	"url": sSource,
 		    	"data": aoData,
-		    	"success": fnCallback
+		    	"success": function(resp){
+		    		if(resp.iTotalRecords == 0){
+//		    			return;
+		    		}
+		    		fnCallback(resp);
+		    	}
 	    	});
 		},
 	    "aoColumns": [{"mData":"deviceSid"},  
@@ -32,7 +41,7 @@ $(document).ready(function(){
 		              {"mData":"humidity"},
 		              {"mData":"co2"},
 		              {"mData":"nh3"}],  // 与后台返回属性一致
-	    //"bFilter": false,                       //不使用过滤功能     
+	    //"bFilter": true,                       //不使用过滤功能     
 	    "sPaginationType": "full_numbers",      //翻页界面类型   
 	    "oLanguage": {                          //国际化   
 	    	"sUrl": "media/i18n/zh_CN.txt"   
@@ -43,7 +52,6 @@ $(document).ready(function(){
 	$.get("hotelNames", function(data){
 		var $hotelSelect = $("#hotelList");
 		for(var index in data){
-			console.log(data[index].id, data[index].name);
 			var option = "<option value='"+ data[index].id +"'>"+ data[index].name +"</option>"
 			$hotelSelect.append(option);
 		}
@@ -72,6 +80,11 @@ $("#hotelList").change(function(){
 	id_of_clearInterval = setInterval(refresh, 30000);
 });
 
+//事件 - 酒店模糊查询
+$("#search_div #room").keyup(function(){
+	$("#monitorValueTable").DataTable().draw();   // 取表格对象 刷新
+});
+
 //事件 - 显示模式切换
 $("#btnModalDiv").click(function(){
 	$("#modal_div").show();
@@ -92,60 +105,64 @@ $('#monitorValueTable').DataTable().on( 'draw', function () {
 	// 数据加载完成后设置图标不显示
 	$("#loading").hide();
 	
-	$("#modal_div").html("");
+	$("#modal_div_content").html("");
     var total = $('#monitorValueTable tbody tr').size();
     var rowSize = 6;   // 每行6个
     // 共多少行
     for(var i=0; i<total/rowSize; i++){
-    	$("#modal_div").append("<div class='row'></div>");
+    	$("#modal_div_content").append("<div class='row'></div>");
     }
     
-    // 遍历每行 增加视块
-    $("#modal_div .row").each(function(rowIndex){
-    	// 共多少行
-    	var offset = rowIndex * rowSize;
-        for(var i=offset ;i<offset+rowSize && i<total; i++){
-        	$("#template_div .col-md-2").clone().appendTo($(this));
+    // 如果只有一行错误提示，那么相当于没有数据
+	if(total>0 && !$('#monitorValueTable tbody tr td').hasClass("dataTables_empty")){
+		
+		// 遍历每行 增加视块
+	    $("#modal_div_content .row").each(function(rowIndex){
+	    	
+	    	// 每行第一个元素的偏移量
+	    	var offset = rowIndex * rowSize;
+	        for(var i=offset ;i<offset+rowSize && i<total; i++){
+	        	$("#template_div .col-md-2").clone().appendTo($(this));
 
-        	// 从表中的第i行取数据
-        	var $tr = $('#monitorValueTable tbody tr:eq('+ i +')')
-        	
-        	// 取最新添加的视块
-        	var $modalDiv = $(this).children(":last");
-        	
-//        	// 根据设备的状态：在线/离线、开机/关机 设置面板标题的背景色
-        	if( "在线" == $tr.children("td:eq(2)").text() ){
-        		$modalDiv.find("div.panel").removeClass("panel-warning");
-	        	// 只有在线才能判断是否开机
-	    		if( "关" == $tr.children("td:eq(3)").text() ){
-	        		$modalDiv.find("div.panel").removeClass("panel-info").addClass("panel-default");
-	        	} 
-	    		else if( "开" == $tr.children("td:eq(3)").text() ){
-	    			$modalDiv.find("div.panel").removeClass("panel-default").addClass("panel-info");
-	    		}
-        	}
-        	else{
-        		$modalDiv.find("div.panel").removeClass("panel-default panel-info").addClass("panel-warning");
-        	}
-        	
-    		
-        	$modalDiv.find("div.panel-heading").text( $tr.children("td:eq(1)").text() );  // name
-//        	$modalDiv.find("div.panel-body li").each(function(index){
-//        		var tdIndex = index + 4;  // 视块与表格数据的对应顺序固定
-//        		$(this).children("span").text( $tr.children("td:eq("+ tdIndex +")").text() );
-//        	});
-        	$modalDiv.find("div.panel-body li:eq(0) span").text( $tr.children("td:eq(4)").text() );  // 温度
-        	$modalDiv.find("div.panel-body li:eq(1) span").text( $tr.children("td:eq(5)").text() );  // 湿度
-        	$modalDiv.find("div.panel-body li:eq(2) span").text( $tr.children("td:eq(6)").text() );  // co2
-        	$modalDiv.find("div.panel-body li:eq(3) span").text( $tr.children("td:eq(7)").text() );  // nh3
-        	
-        	// 图标点击事件
-        	$modalDiv.find("div.panel-footer a:eq(0)").click(function(){
-        		$("#edit_modal .modal-title").text("设备维护");
-        		//console.log($("#edit_modal input[name='id']"));
-        		$("#edit_modal input[name='id']").val($tr.children("td:eq(0)").text());
-        		$("#edit_modal").modal(); 
-        	})
-        }
-    });
+	        	// 从表中的第i行取数据
+	        	var $tr = $('#monitorValueTable tbody tr:eq('+ i +')')
+	        	
+	        	// 取最新添加的视块
+	        	var $modalDiv = $(this).children(":last");
+	        	
+	        	// 根据设备的状态：在线/离线、开机/关机 设置面板标题的背景色
+	        	if( "在线" == $tr.children("td:eq(2)").text() ){
+	        		$modalDiv.find("div.panel").removeClass("panel-warning");
+		        	// 只有在线才能判断是否开机
+		    		if( "关" == $tr.children("td:eq(3)").text() ){
+		        		$modalDiv.find("div.panel").removeClass("panel-info").addClass("panel-default");
+		        	} 
+		    		else if( "开" == $tr.children("td:eq(3)").text() ){
+		    			$modalDiv.find("div.panel").removeClass("panel-default").addClass("panel-info");
+		    		}
+	        	}
+	        	else{
+	        		$modalDiv.find("div.panel").removeClass("panel-default panel-info").addClass("panel-warning");
+	        	}
+	        	
+	        	$modalDiv.find("div.panel-heading").text( $tr.children("td:eq(1)").text() );  // name
+	        	$modalDiv.find("div.panel-body li").each(function(index){
+	        		var tdIndex = index + 4;  // 视块与表格数据的对应顺序固定
+	        		$(this).children("span").text( $tr.children("td:eq("+ tdIndex +")").text() );
+	        	});
+	        	
+	        	// 图标点击事件
+	        	$modalDiv.find("div.panel-footer a:eq(0)").click(function(){
+	        		$("#edit_modal .modal-title").text("设备维护");
+	        		//console.log($("#edit_modal input[name='id']"));
+	        		$("#edit_modal input[name='id']").val($tr.children("td:eq(0)").text());
+	        		$("#edit_modal").modal(); 
+	        	})
+	        }
+	    });
+	}
+	
+    // 把表格的分页部分复制到视块视图
+    $("#info_div").html("").append($("#monitorValueTable_info").clone(true));
+    $("#pagination_div").html("").append($("#monitorValueTable_paginate").clone(true));
 });
