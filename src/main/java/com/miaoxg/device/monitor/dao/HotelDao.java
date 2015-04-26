@@ -16,10 +16,17 @@ public class HotelDao extends BaseDao {
      * 查询所有的酒店id和name
      */
     public List<Hotel> selectHotelByUser(Integer userId){
-        String sql = "select h.id, h.name from hotel h "
-                + " join user_hotel uh on h.id = uh.hotel_id join user u on uh.user_id = u.id"
-                + " where u.id = ?";
-        return getJdbcTemplate().query(sql, new HotelRowMapper(), userId);
+        String sql = "";
+        if(userId == 0){  // TODO 如果系统不止一个管理员，获取该管理员的角色判断
+            sql = "select h.id, h.name from hotel h "; 
+            return getJdbcTemplate().query(sql, new HotelRowMapper());
+        }
+        else{
+            sql = "select h.id, h.name from hotel h "
+                    + " join user_hotel uh on h.id = uh.hotel_id join user u on uh.user_id = u.id"
+                    + " where u.id = ?"; 
+            return getJdbcTemplate().query(sql, new HotelRowMapper(), userId);
+        } 
     }
     
     /**

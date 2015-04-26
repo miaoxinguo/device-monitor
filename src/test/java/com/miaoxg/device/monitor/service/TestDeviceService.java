@@ -15,7 +15,7 @@ public class TestDeviceService {
     
     @Test
     public void testgetRemoteMonitorValue() throws Exception{
-        //deviceService.getRemoteMonitorValue();  // 从平台去数据 并存入数据库和缓存
+        deviceService.getRemoteMonitorValue("123");  // 从平台去数据 并存入数据库和缓存
     }
 }
 
