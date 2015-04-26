@@ -46,6 +46,16 @@
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 
+	<!--  设置Spring MVC可以接收put请求参数 -->
+	<filter>
+        <filter-name>HttpMethodFilter</filter-name>
+        <filter-class>org.springframework.web.filter.HttpPutFormContentFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>HttpMethodFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    
 	<!-- Spring MVC 设置 -->
 	<servlet>
 		<servlet-name>dispatcher</servlet-name>
