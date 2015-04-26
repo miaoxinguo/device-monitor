@@ -3,6 +3,8 @@ package com.miaoxg.device.monitor.entity;
 import java.io.Serializable;
 import java.time.LocalDate;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 public class Device implements Serializable{
     
     private static final long serialVersionUID = 1L;
@@ -12,7 +14,12 @@ public class Device implements Serializable{
     private String name;
     private String room;   // 具体房间号
     private Hotel hotel;   // 所属酒店
-    private LocalDate date;    // 上一次滤网清洗/更换时间
+    
+    @DateTimeFormat(pattern = "yyyy-MM-dd") 
+    private LocalDate lastDate;    // 上一次滤网清洗/更换时间
+    
+    @DateTimeFormat(pattern = "yyyy-MM-dd") 
+    private LocalDate nextDate;    // 下一次滤网清洗/更换时间
     
     public Integer getId() {
         return id;
@@ -44,10 +51,16 @@ public class Device implements Serializable{
     public void setHotel(Hotel hotel) {
         this.hotel = hotel;
     }
-    public LocalDate getDate() {
-        return date;
+    public LocalDate getLastDate() {
+        return lastDate;
     }
-    public void setDate(LocalDate date) {
-        this.date = date;
+    public void setLastDate(LocalDate lastDate) {
+        this.lastDate = lastDate;
+    }
+    public LocalDate getNextDate() {
+        return nextDate;
+    }
+    public void setNextDate(LocalDate nextDate) {
+        this.nextDate = nextDate;
     }
 }

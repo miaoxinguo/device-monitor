@@ -11,7 +11,9 @@ import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.miaoxg.device.monitor.entity.Device;
 import com.miaoxg.device.monitor.entity.MonitorValue;
+import com.miaoxg.device.monitor.vo.DeviceVo;
 import com.miaoxg.device.monitor.vo.MonitorValueVo;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -47,6 +49,34 @@ public class TestDeviceDao {
         vo.setiDisplayLength(10);
         
         List<String> sids = deviceDao.selectDeviceSidByHotel(vo);
+        System.out.println(sids.size());
+        Assert.assertTrue(sids.size() >= 0);
+    }
+    
+    @Test
+    public void testSelectDeviceByAdmin(){
+        // 构造测试数据
+        MonitorValueVo vo = new MonitorValueVo();
+        vo.setUserId(0);
+        vo.setiDisplayStart(0);
+        vo.setiDisplayLength(10);
+        
+        List<String> sids = deviceDao.selectDeviceSidByUser(vo);
+        System.out.println(sids.size());
+        Assert.assertTrue(sids.size() >= 0);
+    }
+    
+    /**
+     * 测试 分页查询设备信息
+     */
+    @Test
+    public void testSelectDevices(){
+        // 构造测试数据
+        DeviceVo vo = new DeviceVo();
+        vo.setiDisplayStart(0);
+        vo.setiDisplayLength(10);
+        
+        List<Device> sids = deviceDao.selectDevices(vo);
         System.out.println(sids.size());
         Assert.assertTrue(sids.size() >= 0);
     }
