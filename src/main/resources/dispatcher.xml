@@ -23,6 +23,7 @@
 	<mvc:resources location="/image/" mapping="/image/**"></mvc:resources>
 	<mvc:resources location="/bootstrap/" mapping="/bootstrap/**"></mvc:resources>
 	<mvc:resources location="/media/" mapping="/media/**"></mvc:resources>
+	<mvc:resources location="/My97DatePicker/" mapping="/My97DatePicker/**"></mvc:resources>
 	
 	
 	
