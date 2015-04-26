@@ -22,9 +22,7 @@ import com.miaoxg.device.monitor.vo.MonitorValueVo;
 
 @Repository
 public class DeviceDao extends BaseDao {
-    public static void main(String[] args) {
-       System.out.println( LocalDate.now().toString());
-    }
+
     private static final Logger logger = LoggerFactory.getLogger(DeviceDao.class);
 
     /**
