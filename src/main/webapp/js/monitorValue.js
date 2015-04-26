@@ -5,7 +5,7 @@ $(document).ready(function(){
 	$("#monitorValueTable").dataTable({
 		"bPaginate": true,
 		"bLengthChange": false, 			//改变每页显示数据数量
-		'iDisplayLength': 2, 				//每页显示记录数
+		'iDisplayLength': 12, 				//每页显示记录数
 		"bSort": false,						//排序
 		"bFilter": false, 					//过滤功能
 	    //"bProcessing": true,                    //加载数据时显示正在加载信息   
@@ -22,9 +22,6 @@ $(document).ready(function(){
 		    	"url": sSource,
 		    	"data": aoData,
 		    	"success": function(resp){
-		    		if(resp.iTotalRecords == 0){
-//		    			return;
-		    		}
 		    		fnCallback(resp);
 		    	}
 	    	});
