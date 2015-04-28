@@ -1,0 +1,36 @@
+<!-- 查询区 -->
+<div id="search_div" class="row row_4">
+
+	<!-- 酒店的下拉列表  -->
+	<div class="col-md-4">   
+		选择要查看酒店：
+		<select id="hotelList">
+			<option value="0">所有</option>
+		</select>
+	</div>
+	
+	<!-- 房间号 -->
+	<div class="col-md-4">房间号：<input id="room"></div>
+</div>
+
+<!-- 内容区  设备列表  -->
+<div id="content_list" class="row">
+	<div class="col-md-12">
+		<!-- 数据表格 -->
+		<table class="display" id="deviceTable">
+			<thead>
+				<tr>
+					<th>设备ID</th>
+					<th>设备编号</th>
+					<th>设备名</th>
+					<th>酒店</th>
+					<th>房间</th>
+					<th>滤网更换时间</th>
+					<th>下次更换时间</th>
+				</tr>
+			</thead>
+		</table>
+	</div>
+</div>
+
+<script type="text/javascript" src="js/deviceInfo.js"></script>

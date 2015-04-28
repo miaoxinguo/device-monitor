@@ -25,15 +25,19 @@ $(document).ready(function(){
 				return;
 			}
 			if(data.msg == "waiter"){   // 酒店人员不显示系统管理
-				$("#navbar ul:eq(0) li:gt(1)").hide();
+				$("#navbar ul:eq(0) li:eq(1)").hide();
+				$("#homePage").click();
 			}
-			else if(data.msg == "maintainer"){   // 维保人员只显示首页
-				$("#navbar ul:eq(0) li:gt(0)").hide();     // TODO 给维保人员单独做个页面可能更合适
+			else if(data.msg == "maintainer"){  
+				$("#navbar ul:eq(0) li").hide();     // 给维保人员单独做个页面更合适
+				loadPage("deviceInfo.html");  
+			}
+			else if(data.msg == "admin"){
+				$("#navbar ul:eq(0) li:eq(0)").hide();
+				$("#systemPage").click();
 			}
 		}
 	});
-	
-	$("#homePage").click();
 });
 
 /*
