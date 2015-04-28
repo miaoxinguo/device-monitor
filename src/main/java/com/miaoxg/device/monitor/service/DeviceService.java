@@ -106,7 +106,7 @@ public class DeviceService {
     }
 
     /**
-     * 获取设备信息
+     * 分页获取设备信息
      */
     public DataTablesVo<Device> getDevices(DeviceVo vo) {
         List<Device> deviceList = deviceDao.selectDevices(vo);
