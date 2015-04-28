@@ -14,6 +14,14 @@ import com.miaoxg.device.monitor.entity.User;
 public class UserDao extends BaseDao {
     
     /**
+     * 更改密码
+     */
+    public int updatePw(String name, String newPw){
+        String sql = "update user set password = ? where name = ?";
+        return getJdbcTemplate().update(sql, newPw, name);
+    }
+    
+    /**
      * 查询用户集合
      */
     public List<User> selectList(Map<String, Object> param){

@@ -44,4 +44,20 @@ public class UserService {
         user.setPassword(""); // user会存入session，不保存密码
         return user;
     }
+    
+    /**
+     * 改密码
+     */
+    public void modifyPassword(String name, String newPw, String oldPw){
+        User user = userDao.selectUserByName(name);
+        if(user == null){
+            throw new ServiceException("用户："+name+" 不存在");
+        }
+        
+        // 验证密码
+        if(!oldPw.equals(user.getPassword())){
+            throw new ServiceException("原密码错误");
+        }
+        userDao.updatePw(name, newPw);
+    }
 }
