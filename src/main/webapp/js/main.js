@@ -27,7 +27,7 @@ $(document).ready(function(){
 			if(data.msg == "waiter"){   // 酒店人员不显示系统管理
 				$("#navbar ul:eq(0) li:gt(1)").hide();
 			}
-			else if(data.msg == "maintainer"){   // 维保人与只显示首页
+			else if(data.msg == "maintainer"){   // 维保人员只显示首页
 				$("#navbar ul:eq(0) li:gt(0)").hide();     // TODO 给维保人员单独做个页面可能更合适
 			}
 		}
@@ -36,7 +36,9 @@ $(document).ready(function(){
 	$("#homePage").click();
 });
 
-//加载首页 监测值页
+/*
+ * 加载首页 监测值页
+ */
 $("#homePage").click(function(){
 	// 首页不采用左侧菜单方式
 	$("#contentContainer #leftMenu").hide().removeClass("col-md-2");
@@ -49,12 +51,23 @@ $("#homePage").click(function(){
 	$(this).parent().addClass("active");
 });
 
-//加载系统管理页
+/*
+ * 加载系统管理页
+ */
 $("#systemPage").click(function(){
 	loadLeftMenu("systemLeftMenu.html");
 	loadPage("device.html");  // 默认显示设备页
 	$("#navbar li.active").removeClass("active");
 	$(this).parent().addClass("active");
+});
+
+/*
+ * 加载修改密码模态窗口
+ */
+$("#settingPage").click(function(){
+	$.get("html/setting.html", function(data){
+		$("#pw").html(data).children(".modal").modal();
+	}, "html");
 });
 
 /**

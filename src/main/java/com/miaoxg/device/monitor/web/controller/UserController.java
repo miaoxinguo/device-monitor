@@ -74,4 +74,16 @@ public class UserController extends AbstractController{
         // 封装返回参数
         return JsonUtils.toDatatablesJson(count, count, sEcho, userList);
     }
+    
+    /**
+     * 修改密码
+     */
+    @RequestMapping(value = "password", method = RequestMethod.PUT)
+    public String changePassword(String oldPw, String newPw, HttpSession session) {
+        User user = (User)session.getAttribute("user");
+        userService.modifyPassword(user.getName(), newPw, oldPw);
+        
+        // 封装返回参数
+        return JsonUtils.toSuccessJson();
+    }
 }
