@@ -227,24 +227,63 @@ public class DeviceDao extends BaseDao {
      * 分页查询设备信息
      */
     public List<Device> selectDevices(DeviceVo vo) {
-        StringBuffer sql = new StringBuffer("select d.id, d.sid, d.name, d.room, d.last_date, d.next_date, d.hotel_id, h.name "
-                + "from device d inner join hotel h on d.hotel_id = h.id ");
+        StringBuffer sql = new StringBuffer("select d.id, d.sid, d.name, d.room, d.last_date, d.next_date, h.name "
+                + "from device d inner join hotel h on d.hotel_id = h.id where 1=1 ");
+        if(vo.getHotelId() > 0){
+            sql.append(" and h.id = ?");
+        }
+        if(StringUtils.isNotBlank(vo.getRoom())){
+            sql.append(" and d.room like ?");
+        }
         sql.append(" limit ?, ?");
         
         List<Object> params = new ArrayList<Object>();
+        if(vo.getHotelId() > 0){
+            params.add(vo.getHotelId());
+        }
+        if(StringUtils.isNotBlank(vo.getRoom())){
+            params.add("%" + vo.getRoom() + "%");
+        }
         params.add(vo.getiDisplayStart());
         params.add(vo.getiDisplayLength());
         logger.debug("准备执行的sql: {}", sql.toString());
         logger.debug("参数:{}", params);
-        return getJdbcTemplate().query(sql.toString(), params.toArray(), new DeviceRowMapper());
+        return getJdbcTemplate().query(sql.toString(), params.toArray(), new RowMapper<Device>(){
+            @Override
+            public Device mapRow(ResultSet rs, int rowNum) throws SQLException {
+                Device device = new Device();
+                device.setId(rs.getInt("id"));
+                device.setSid(rs.getString("sid"));
+                device.setName(rs.getString("name"));
+                device.setRoom(rs.getString("room"));
+                device.setLastDate(LocalDate.parse(rs.getString("last_date")));
+                device.setNextDate(LocalDate.parse(rs.getString("next_date")));
+                device.setHotel(new Hotel(rs.getString("h.name")));
+                return device;
+            }
+        });
     }
     
     /**
      * 查询设备数量
      */
     public int selectDevicesCount(DeviceVo vo) {
-        StringBuffer sql = new StringBuffer("select count(*) from device d inner join hotel h on d.hotel_id = h.id ");
-        return getJdbcTemplate().queryForObject(sql.toString(), Integer.class);
+        StringBuffer sql = new StringBuffer("select count(*) from device d inner join hotel h on d.hotel_id = h.id where 1=1 ");
+        if(vo.getHotelId() > 0){
+            sql.append(" and h.id = ?");
+        }
+        if(StringUtils.isNotBlank(vo.getRoom())){
+            sql.append(" and d.room like ?");
+        }
+        
+        List<Object> params = new ArrayList<Object>();
+        if(vo.getHotelId() > 0){
+            params.add(vo.getHotelId());
+        }
+        if(StringUtils.isNotBlank(vo.getRoom())){
+            params.add("%" + vo.getRoom() + "%");
+        }
+        return getJdbcTemplate().queryForObject(sql.toString(), params.toArray(), Integer.class);
     }
     
     /**
@@ -252,7 +291,7 @@ public class DeviceDao extends BaseDao {
      */
     public Device selectDevice(String sid) {
         String sql = "select d.id, d.sid, d.name, d.room, d.last_date, d.next_date, d.hotel_id "
-                + "from device d  where sid=?";
+                + "from device d  where sid = ?";
         
         logger.debug("准备执行的sql: {}", sql.toString());
         logger.debug("参数:{}", sid);
@@ -261,7 +300,7 @@ public class DeviceDao extends BaseDao {
     
     public class DeviceRowMapper implements RowMapper<Device> {
         @Override
-        public Device mapRow(ResultSet rs, int line) throws SQLException {
+        public Device mapRow(ResultSet rs, int rowNum) throws SQLException {
             Device device = new Device();
             device.setId(rs.getInt("id"));
             device.setSid(rs.getString("sid"));
@@ -269,19 +308,7 @@ public class DeviceDao extends BaseDao {
             device.setRoom(rs.getString("room"));
             device.setLastDate(LocalDate.parse(rs.getString("last_date")));
             device.setNextDate(LocalDate.parse(rs.getString("next_date")));
-            Hotel hotel = new Hotel();
-            rs.findColumn("hotel_id");
-            try{
-                hotel.setId(rs.getInt("hotel_id"));
-            }catch(Exception e){
-                // ingore
-            }
-            try{
-                hotel.setName(rs.getString("h.name"));
-            }catch(Exception e){
-                // ingore
-            }
-            device.setHotel(hotel);
+            device.setHotel(new Hotel(rs.getInt("hotel_id")));
             return device;
         }
     }
