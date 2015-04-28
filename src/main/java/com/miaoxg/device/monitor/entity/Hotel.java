@@ -10,6 +10,15 @@ public class Hotel implements Serializable {
     private String name;            // 酒店名
     private User user;              // 维保人
     
+    public Hotel(){
+    }
+    public Hotel(Integer id){
+        this.id = id;
+    }
+    public Hotel(String name){
+        this.name = name;
+    }
+    
     public Integer getId() {
         return id;
     }
