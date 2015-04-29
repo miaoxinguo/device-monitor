@@ -25,7 +25,7 @@ public class GetMonitorValueJob extends QuartzJobBean {
     
     @Override
     protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
-        logger.debug("执行获取设备监测值任务");
+        logger.debug("执行任务 -- 获取设备监测值");
         deviceService.getRemoteMonitorValue();
     }
 }
