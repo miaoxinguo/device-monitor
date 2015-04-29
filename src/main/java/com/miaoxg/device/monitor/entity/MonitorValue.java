@@ -23,6 +23,8 @@ public class MonitorValue implements Serializable{
     private float co2;
     private float nh3;
     
+    private int usedHours;  // 滤网已用时间
+    
     public Integer getDeviceId() {
         return deviceId;
     }
@@ -76,5 +78,11 @@ public class MonitorValue implements Serializable{
     }
     public void setOpen(boolean isOpen) {
         this.isOpen = isOpen;
+    }
+    public int getUsedHours() {
+        return usedHours;
+    }
+    public void setUsedHours(int usedHours) {
+        this.usedHours = usedHours;
     }
 }
