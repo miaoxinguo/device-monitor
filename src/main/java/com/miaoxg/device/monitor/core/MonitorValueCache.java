@@ -84,4 +84,11 @@ public enum MonitorValueCache {
     public Collection<MonitorValue> getAll(){
         return cache.values();
     }
+    
+    /**
+     * sid是否存在
+     */
+    public boolean containsKey(String sid){
+        return cache.containsKey(sid);
+    }
 }
