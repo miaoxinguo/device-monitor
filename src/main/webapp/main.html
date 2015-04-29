@@ -21,6 +21,24 @@
 	.row_4 {
 	  margin-bottom: 40px;
 	}
+	/* Sticky footer styles */
+	html {
+	  position: relative;
+	  min-height: 100%;
+	}
+	body {
+	  /* Margin bottom by footer height */
+	  margin-bottom: 40px;
+	}
+	.footer {
+	  position: absolute;
+	  bottom: 0;
+	  width: 100%;
+	  /* Set the fixed height of the footer here */
+	  height: 40px;
+	  padding-top: 10px;
+	  background-color: #f5f5f5;
+	}
 </style>
 <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
 <!--[if lt IE 9]>
@@ -66,7 +84,16 @@
 	
 	<!-- 修改密码div -->
 	<div id="pw"></div>
+	
 </body>
+
+<footer class="footer">
+    <div class="container">
+   		<p class="text-muted text-center">
+   			空气检测设备管理系统
+   		</p>
+  	</div>
+</footer>
 <script type="text/javascript" src="media/js/jquery.js"></script>
 <script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="media/js/jquery.dataTables.min.js"></script>
