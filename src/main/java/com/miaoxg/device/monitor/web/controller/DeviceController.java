@@ -76,6 +76,9 @@ public class DeviceController extends AbstractController{
         if(StringUtils.isBlank(device.getSid())){
             return JsonUtils.toFailureJson("设备编号不能为空");
         }
+//        if(MonitorValueCache.INSTANCE.containsKey(device.getSid())){
+//            return JsonUtils.toFailureJson("设备编号已存在");
+//        }
         if(device.getHotel().getId() <= 0){
             return JsonUtils.toFailureJson("酒店不能为空");
         }

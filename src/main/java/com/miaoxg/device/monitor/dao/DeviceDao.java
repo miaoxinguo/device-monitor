@@ -29,7 +29,7 @@ public class DeviceDao extends BaseDao {
      * 插入一条记录
      */
     public int insertDevice(Device device) {
-        StringBuffer sql = new StringBuffer("insert device(sid, name, hotel_id, room) values(?, ?, ?, ?, ?, ?)");
+        StringBuffer sql = new StringBuffer("insert device(sid, name, hotel_id, room) values(?, ?, ?, ?)");
         return getJdbcTemplate().update(sql.toString(), device.getSid(), device.getSid(), 
                 device.getHotel().getId(), device.getRoom());
     }
@@ -315,6 +315,14 @@ public class DeviceDao extends BaseDao {
         logger.debug("准备执行的sql: {}", sql.toString());
         logger.debug("参数:{}", sid);
         return getJdbcTemplate().queryForObject(sql, new DeviceRowMapper(), sid);
+    }
+    
+    /**
+     * 根据sid查询设备数量 用于判断是否存在
+     */
+    public int selectCount(String sid) {
+        String sql = "select count(*) from device  where sid = ?";
+        return getJdbcTemplate().queryForObject(sql, Integer.class, sid);
     }
     
     /**

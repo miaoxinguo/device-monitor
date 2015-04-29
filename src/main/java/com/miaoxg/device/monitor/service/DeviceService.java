@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.miaoxg.device.monitor.core.Constants;
 import com.miaoxg.device.monitor.core.MonitorValueCache;
+import com.miaoxg.device.monitor.core.ServiceException;
 import com.miaoxg.device.monitor.dao.DeviceDao;
 import com.miaoxg.device.monitor.dao.HotelDao;
 import com.miaoxg.device.monitor.entity.Device;
@@ -55,6 +56,9 @@ public class DeviceService {
         /*
          * 验证+更新缓存
          */
+        if(existSid(device.getSid())){
+            throw new ServiceException("设备已存在");
+        }
         deviceDao.insertDevice(device);
         
         getRemoteMonitorValue(device.getSid());
@@ -64,6 +68,7 @@ public class DeviceService {
      * 删除设备
      */
     public void removeDevice(String sid) {
+        // TODO 从缓存中删除
         deviceDao.deleteDevice(sid);
     }
     
@@ -86,6 +91,13 @@ public class DeviceService {
      */
     public void rename(String deviceId, String newName) {
         
+    }
+    
+    /**
+     * 判断sid是否存在
+     */
+    public boolean existSid(String sid) {
+        return deviceDao.selectCount(sid) == 0 ? false : true;
     }
     
     /**
