@@ -22,13 +22,16 @@ $(document).ready(function(){
 		    	}
 	    	});
 		},
-	    "aoColumns": [   {"mData":"id", "bVisible": false},  
+	    "aoColumns": [   {"mData":"id", "bVisible": false},   // 与后台返回属性一致
 	                     {"mData":"sid"},
 	                     {"mData":"name"},
 	                     {"mData":"hotel.name"},
 	                     {"mData":"room"},
-	                     {"mData":"lastDate"},
-	                     {"mData":"nextDate"}],  // 与后台返回属性一致
+	                     {"mData":"usedHours", "fnCreatedCell": function (nTd, sData, oData, iRow, iCol) {
+	                    	 if(sData > 1500){
+	                    		 $(nTd).addClass("text-danger");
+	                    	 }
+			             }}],  
 	    "bFilter": false,                       //不使用过滤功能     
 	    "sPaginationType": "full_numbers",      //翻页界面类型   
 	    "oLanguage": {                          //国际化   

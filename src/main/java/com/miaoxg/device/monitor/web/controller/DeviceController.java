@@ -82,12 +82,6 @@ public class DeviceController extends AbstractController{
         if(StringUtils.isBlank(device.getRoom())){
             return JsonUtils.toFailureJson("房间号不能为空");
         }
-        if(device.getLastDate()==null){
-            return JsonUtils.toFailureJson("滤网更换时间不能为空");
-        }
-        if(device.getNextDate() == null){
-            return JsonUtils.toFailureJson("滤网下次更换时间不能为空");
-        }
         deviceService.addDevice(device);
         return JsonUtils.toSuccessJson();
     }
@@ -114,12 +108,6 @@ public class DeviceController extends AbstractController{
         }
         if(StringUtils.isBlank(device.getRoom())){
             return JsonUtils.toFailureJson("房间号不能为空");
-        }
-        if(device.getLastDate()==null){
-            return JsonUtils.toFailureJson("滤网更换时间不能为空");
-        }
-        if(device.getNextDate() == null){
-            return JsonUtils.toFailureJson("滤网下次更换时间不能为空");
         }
         deviceService.modifyDevice(device);
         return JsonUtils.toSuccessJson();
