@@ -1,6 +1,7 @@
 package com.miaoxg.device.monitor.core;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,7 +67,7 @@ public enum MonitorValueCache {
     }
     
     /**
-     * 获取记录, 不负责分页部分
+     * 根据设备sid获取记录
      */
     public List<MonitorValue> get(List<String> deviceSids){
         // 返回需要的
@@ -75,5 +76,12 @@ public enum MonitorValueCache {
             returnList.add(cache.get(sid));
         }
         return returnList;
+    }
+    
+    /**
+     * 获取所有记录
+     */
+    public Collection<MonitorValue> getAll(){
+        return cache.values();
     }
 }
