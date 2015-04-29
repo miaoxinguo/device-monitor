@@ -87,6 +87,7 @@ $("#btn_add").click(function(){
 	$("#form_add #form_add_sid").removeAttr("readonly");
 	$("#form_add").show();
 	$("#device_content").hide();
+	$("#form_add #select_hotel").children("option:eq(0)']").prop("selected", true);
 	
 	// 保存
 	$("#btn_save").click(function(){
@@ -151,7 +152,7 @@ $("#btn_edit").click(function(){
 		dataType: 'json',
 		success:function(data){
 			$("#form_add #form_add_sid").val(data.sid);
-			$("#form_add #select_hotel").children("option[value='"+data.hotel.id+"']").attr("selected",true);
+			$("#form_add #select_hotel").children("option[value='"+data.hotel.id+"']").prop("selected", true);
 			$("#form_add #form_add_room").val(data.room);
 		}	
 	});
