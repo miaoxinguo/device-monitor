@@ -7,6 +7,7 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -38,6 +39,8 @@ public class DeviceService {
     private final String FLAG_CO2           = "&D";       // CO2
     private final String FLAG_NH3           = "&E";       // NH3
     private final String FLAG_IS_OPEN       = "&H";       // 是否开机
+    private final String FLAG_USED_HOURS    = "&S";       // N滤网使用时间
+    
     private final String DEVICE_CLOSED      = "0";        // 关机
     
     @Resource
@@ -69,6 +72,13 @@ public class DeviceService {
      */
     public void modifyDevice(Device device) {
         deviceDao.updateDevice(device);
+    }
+    
+    /**
+     * 批量更新滤网已用时长
+     */
+    public void updateUsedHours(Collection<MonitorValue> values) {
+        deviceDao.updateUsedHours(values);
     }
     
     /**
@@ -284,6 +294,14 @@ public class DeviceService {
             int isOpenBeginIndex = msg.indexOf(FLAG_IS_OPEN) + 3;
             String isDeviceClosed = msg.substring(isOpenBeginIndex, msg.indexOf("&", isOpenBeginIndex));
             obj.setOpen(!DEVICE_CLOSED.equals(isDeviceClosed));
+            
+            // 滤网使用时长
+            int usedHoursBeginIndex = msg.indexOf(FLAG_USED_HOURS) + 3;
+            String UserdHours = msg.substring(usedHoursBeginIndex, msg.indexOf(",", usedHoursBeginIndex));
+            obj.setUsedHours(Integer.valueOf(UserdHours));
+        }
+        else{
+            obj.setUsedHours(-1);  // 如果离线默认值为0，会把已用时间覆盖掉
         }
         return obj;
     }

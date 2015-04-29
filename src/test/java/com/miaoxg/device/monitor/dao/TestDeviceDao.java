@@ -22,6 +22,24 @@ public class TestDeviceDao {
     @Resource
     private DeviceDao deviceDao;
     
+    /**
+     * 测试批量更新滤网已用时间
+     */
+    @Test
+    public void testUpdateUsedHours(){
+        
+        // 构造测试数据
+        List<MonitorValue> list = new ArrayList<MonitorValue>();
+        for(String sid : deviceDao.selectAllDeviceSid()){
+            MonitorValue mv = new MonitorValue();
+            mv.setDeviceSid(sid);
+            mv.setUsedHours(sid.endsWith("9") ? -1 : 1244); 
+            list.add(mv);
+        }
+        //执行测试
+        deviceDao.updateUsedHours(list);
+    }
+    
     @Test
     public void testBatchInsertMonitorValue(){
         // 构造测试数据

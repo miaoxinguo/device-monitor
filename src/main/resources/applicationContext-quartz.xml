@@ -15,11 +15,21 @@
     	<property name="cronExpression" value="0/30 * * * * ?" />  <!-- 每30秒执行一次 -->
     </bean>
     
+    <!-- quartz自动任务 - 更新滤网已用时长 -->
+    <bean id="updateUsedHoursJob" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+    	<property name="jobClass" value="com.miaoxg.device.monitor.scheduler.UpdateUsedHoursJob" />
+    </bean>
+    <bean id="cronUsedHoursTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+    	<property name="jobDetail" ref="updateUsedHoursJob"/>
+    	<property name="cronExpression" value="0 0 0/1 * * ?" />  <!-- 每1小时执行一次 -->
+    </bean>
+    
     <!-- quartz自动任务 - 调度设置 -->
     <bean id="myScheduler" lazy-init="false" autowire="no" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
     	<property name="triggers">
     		<list>
     			<ref bean="cronMonitorValueTrigger" />
+    			<ref bean="cronUsedHoursTrigger" />
     		</list>
     	</property>
     	<property name="quartzProperties">

@@ -2,10 +2,10 @@ package com.miaoxg.device.monitor.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -29,9 +29,9 @@ public class DeviceDao extends BaseDao {
      * 插入一条记录
      */
     public int insertDevice(Device device) {
-        StringBuffer sql = new StringBuffer("insert device(sid, name, hotel_id, room, last_date, next_date) values(?, ?, ?, ?, ?, ?)");
-        return getJdbcTemplate().update(sql.toString(), device.getSid(), device.getSid(), device.getHotel().getId(), 
-                device.getRoom(), device.getLastDate().toString(), device.getNextDate().toString());
+        StringBuffer sql = new StringBuffer("insert device(sid, name, hotel_id, room) values(?, ?, ?, ?, ?, ?)");
+        return getJdbcTemplate().update(sql.toString(), device.getSid(), device.getSid(), 
+                device.getHotel().getId(), device.getRoom());
     }
     
     /**
@@ -46,15 +46,16 @@ public class DeviceDao extends BaseDao {
         
         List<Object[]> params = new ArrayList<Object[]>();
         for(MonitorValue mv : list){
-            Object[] param = new Object[8];
-            param[0] = mv.getDeviceSid();
-            param[1] = mv.getTemperature();
-            param[2] = mv.getHumidity();
-            param[3] = mv.getCo2();
-            param[4] = mv.getNh3();
-            param[5] = mv.isOnLine();
-            param[6] = mv.isOpen();
-            param[7] = syncTime;
+            Object[] param = {
+                mv.getDeviceSid(), 
+                mv.getTemperature(), 
+                mv.getHumidity(),
+                mv.getCo2(),
+                mv.getNh3(), 
+                mv.isOnLine(), 
+                mv.isOpen(), 
+                syncTime
+            };
             params.add(param);
         }
         getJdbcTemplate().batchUpdate(sql, params); 
@@ -64,10 +65,25 @@ public class DeviceDao extends BaseDao {
      * 更新一条记录
      */
     public int updateDevice(Device device) {
-        StringBuffer sql = new StringBuffer("update device set hotel_id=?, room=?, last_date=?, next_date=? "
-                + " where sid=?");
-        return getJdbcTemplate().update(sql.toString(), device.getHotel().getId(), device.getRoom(), 
-                device.getLastDate().toString(), device.getNextDate().toString(),  device.getSid());
+        StringBuffer sql = new StringBuffer("update device set hotel_id=?, room=? where sid=?");
+        return getJdbcTemplate().update(sql.toString(), 
+                device.getHotel().getId(), device.getRoom(),  device.getSid());
+    }
+    
+    /**
+     * 批量更新滤网已用时长
+     */
+    public void updateUsedHours(Collection<MonitorValue> values) {
+        String sql = "update device set used_hours = ? where sid = ?";
+        List<Object[]> paramList = new ArrayList<Object[]>();
+        for(MonitorValue mv : values){
+            if(mv.getUsedHours() < 0){
+                continue;
+            }
+            Object[] param = {mv.getUsedHours(), mv.getDeviceSid()};
+            paramList.add(param);
+        }
+        getJdbcTemplate().batchUpdate(sql, paramList);
     }
     
     /**
@@ -202,7 +218,7 @@ public class DeviceDao extends BaseDao {
     }
     
     /**
-     * 分页查询所有酒店所有设备的数量
+     * 查询所有酒店所有设备的数量
      */
     public int selectAllDeviceSidCount(MonitorValueVo vo){
         StringBuffer sql = new StringBuffer("select count(*) from device d where 1=1");
@@ -227,8 +243,10 @@ public class DeviceDao extends BaseDao {
      * 分页查询设备信息
      */
     public List<Device> selectDevices(DeviceVo vo) {
-        StringBuffer sql = new StringBuffer("select d.id, d.sid, d.name, d.room, d.last_date, d.next_date, h.name "
-                + "from device d inner join hotel h on d.hotel_id = h.id where 1=1 ");
+        StringBuffer sql = new StringBuffer("select d.id, d.sid, d.name, d.room, d.used_hours, h.name"
+                + " from device d "
+                + " inner join hotel h on d.hotel_id = h.id "
+                + " where 1=1 ");
         if(vo.getHotelId() > 0){
             sql.append(" and h.id = ?");
         }
@@ -255,10 +273,12 @@ public class DeviceDao extends BaseDao {
                 device.setId(rs.getInt("id"));
                 device.setSid(rs.getString("sid"));
                 device.setName(rs.getString("name"));
-                device.setRoom(rs.getString("room"));
-                device.setLastDate(LocalDate.parse(rs.getString("last_date")));
-                device.setNextDate(LocalDate.parse(rs.getString("next_date")));
+                
+                // 设置所在酒店
                 device.setHotel(new Hotel(rs.getString("h.name")));
+                device.setRoom(rs.getString("room"));
+                
+                device.setUsedHours(rs.getInt("used_hours"));
                 return device;
             }
         });
@@ -290,14 +310,16 @@ public class DeviceDao extends BaseDao {
      * 根据sid查询设备信息
      */
     public Device selectDevice(String sid) {
-        String sql = "select d.id, d.sid, d.name, d.room, d.last_date, d.next_date, d.hotel_id "
-                + "from device d  where sid = ?";
+        String sql = "select d.id, d.sid, d.name, d.room, d.hotel_id from device d  where sid = ?";
         
         logger.debug("准备执行的sql: {}", sql.toString());
         logger.debug("参数:{}", sid);
         return getJdbcTemplate().queryForObject(sql, new DeviceRowMapper(), sid);
     }
     
+    /**
+     * 基本信息的结果集映射
+     */
     public class DeviceRowMapper implements RowMapper<Device> {
         @Override
         public Device mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -306,8 +328,6 @@ public class DeviceDao extends BaseDao {
             device.setSid(rs.getString("sid"));
             device.setName(rs.getString("name"));
             device.setRoom(rs.getString("room"));
-            device.setLastDate(LocalDate.parse(rs.getString("last_date")));
-            device.setNextDate(LocalDate.parse(rs.getString("next_date")));
             device.setHotel(new Hotel(rs.getInt("hotel_id")));
             return device;
         }
