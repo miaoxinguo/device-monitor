@@ -6,7 +6,7 @@ package com.miaoxg.device.monitor.core;
  * @author miaoxinguo2002@163.com
  */
 public enum Role {
-    admin("系统管理员"), waiter("酒店工作人员"), maintainer("维保人员");    // 酒店人员、维保人员
+    admin("系统管理员"), waiter("酒店人员"), maintainer("维保人员");    // 酒店人员、维保人员
     
     private String roleName;
     
