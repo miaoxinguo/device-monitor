@@ -59,8 +59,8 @@ public class AbstractController {
      */
     @ExceptionHandler(Exception.class)
     protected @ResponseBody String exceptionHandler(Exception e){
-        logger.error("系统异常", e);
-        return JsonUtils.toFailureJson(e.getMessage());
+        logger.error("非法异常", e);
+        return JsonUtils.toFailureJson("系统处理失败，请稍后再试");
     }
 }
 

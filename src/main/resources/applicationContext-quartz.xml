@@ -12,7 +12,8 @@
     </bean>
     <bean id="cronMonitorValueTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
     	<property name="jobDetail" ref="getMonitorValueJob"/>
-    	<property name="cronExpression" value="0/30 * * * * ?" />  <!-- 每30秒执行一次 -->
+    	<!--<property name="cronExpression" value="0/30 * * * * ?" />   每30秒执行一次 -->
+    	<property name="cronExpression" value="0 0/2 * * * ?" />  <!-- 开发环境 每2分执行一次 -->
     </bean>
     
     <!-- quartz自动任务 - 更新滤网已用时长 -->

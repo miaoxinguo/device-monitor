@@ -57,13 +57,13 @@ public class HotelController extends AbstractController{
     /**
      * 修改酒店
      */
-    @RequestMapping(value="hotel", method=RequestMethod.PUT)
-    public String editHotel(Hotel hotel){
-        if(hotel.getId() <= 0){
+    @RequestMapping(value="hotel/{id}", method=RequestMethod.PUT)
+    public String editHotel(@PathVariable Integer id, Hotel hotel){
+        if(id <= 0){
             return JsonUtils.toFailureJson("请选择酒店");
         }
         if(StringUtils.isBlank(hotel.getName())){
-            return JsonUtils.toFailureJson("房间号不能为空");
+            return JsonUtils.toFailureJson("酒店名不能为空");
         }
         if(hotel.getUser().getId() <= 0){
             return JsonUtils.toFailureJson("请选择维保人员");
@@ -80,7 +80,7 @@ public class HotelController extends AbstractController{
     public String getHotelNames(HttpSession session){
         logger.debug("get hotel names");
         User currUser = (User)session.getAttribute("user");
-        return JsonUtils.toJsonString(hotelService.getHotelNames(currUser.getId()));
+        return JsonUtils.toJsonString(hotelService.getHotelNames(currUser));
     }
     
     /**

@@ -1,24 +1,75 @@
-<div class="row row_4">
-	<div class="col-md-12">
-		<button id="btn_add" class="btn btn-primary">增加酒店</button>
-		<button id="btn_remove" class="btn btn-primary">删除酒店</button>
+<!-- 内容区 -->
+<div id="hotel_content">
+
+	<!-- 查询区 -->
+	<div id="search_div" class="row row_4">
+	
+		<!-- 酒店名 -->
+		<div class="col-md-3">
+			酒店：<input id="search_hotel_name">
+		</div>
+		
+		<!-- 维保人员下拉列表  -->
+		<div class="col-md-3">
+			维保人： <select id="search_maintainer_list">
+				<option value="0">所有</option>
+			</select>
+		</div>
+	</div>
+
+	<!-- 操作区 -->
+	<div class="row">
+		<div class="col-md-12">
+			<button id="btn_add" class="btn btn-primary btn-sm">增加</button>
+			<button id="btn_edit" class="btn btn-primary btn-sm">编辑</button>
+			<button id="btn_remove" class="btn btn-primary btn-sm">删除</button>
+		</div>
+	</div>
+	
+	<!-- 内容区  酒店列表  -->
+	<div class="row">
+		<div class="col-md-12">
+			<!-- 数据表格 -->
+			<table class="display" id="hotelTable">
+				<thead>
+					<tr>
+						<th></th>
+						<th>酒店名称</th>
+						<th>维保人员</th>
+					</tr>
+				</thead>
+			</table>
+		</div>
 	</div>
 </div>
 
-<!-- 内容区  酒店列表  -->
-<div class="row">
-	<div class="col-md-12">
-		<!-- 数据表格 -->
-		<table class="display" id="hotelTable">
-			<thead>
-				<tr>
-					<th>ID</th>
-					<th>酒店名</th>
-					<th>维保人员</th>
-				</tr>
-			</thead>
-		</table>
-	</div>
+<!-- 增加/编辑表单 -->
+<div id="form_div" class="row" hidden>
+	<form class="form-horizontal">
+		<div class="form-group">
+			<label for="name" class="col-sm-2 control-label">酒店名称</label>
+			<div class="col-sm-4">
+				<input type="text" class="form-control" id="form_div_name" name="name">
+			</div>
+			<div class="col-sm-4">
+				<p class="form-control-static text-info">必填</p>
+			</div>
+		</div>
+		<div class="form-group">
+			<label for="user.id" class="col-sm-2 control-label">维保人</label>
+			<div class="col-sm-4">
+				<select id="form_div_select_maintainer" name="user.id" class="form-control"></select>
+			</div>
+			<div class="col-sm-4">
+				<p class="form-control-static text-info">请选择</p>
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="col-sm-offset-2 col-sm-3">
+				<button id="btn_save" type="button" class="btn btn-primary">保存</button>
+				<button id="btn_cancel" type="button" class="btn btn-default">取消/返回</button>
+			</div>
+		</div>
+	</form>
 </div>
-
 <script type="text/javascript" src="js/hotel.js"></script>

@@ -1,27 +1,118 @@
-<div class="row row_4">
-	<div class="col-md-12">
-		<button id="btn_add" class="btn btn-primary">增加用户</button>
-		<button id="btn_remove" class="btn btn-primary">删除用户</button>
+<!-- 内容区 -->
+<div id="user_content">
+	<!-- 查询区 -->
+	<div id="search_div" class="row row_4">
+		<!-- 酒店的下拉列表  -->
+		<div class="col-md-3">
+			角色： <select id="search_role">
+				<option value="all">全部</option>
+				<option value="waiter">酒店人员</option>
+				<option value="maintainer">维保人员</option>
+			</select>
+		</div>
+
+		<!-- 用户名 -->
+		<div class="col-md-4">
+			用户名：<input id="search_username">
+		</div>
+	</div>
+	
+	<!-- 操作区 -->
+	<div class="row">
+		<div class="col-md-12">
+			<button id="btn_add" class="btn btn-primary btn-sm">增加</button>
+			<button id="btn_edit" class="btn btn-primary btn-sm">编辑</button>
+			<button id="btn_remove" class="btn btn-primary btn-sm">删除</button>
+		</div>
+	</div>
+	
+	<!-- 用户列表  -->
+	<div class="row">
+		<div class="col-md-12">
+			<!-- 数据表格 -->
+			<table class="display" id="userTable">
+				<thead>
+					<tr>
+						<th>ID</th>
+						<th>用户名</th>
+						<th>用户角色</th>
+						<th>用户角色</th>
+					</tr>
+				</thead>
+				<tbody>
+		        </tbody>
+			</table>
+		</div>
 	</div>
 </div>
 
-<!-- 内容区  用户列表  -->
-<div class="row">
-	<div class="col-md-12">
-		<!-- 数据表格 -->
-		<table class="display" id="userTable">
-			<thead>
-				<tr>
-					<th>ID</th>
-					<th>用户名</th>
-					<th>用户角色</th>
-					<th>用户角色</th>
-				</tr>
-			</thead>
-			<tbody>
-	        </tbody>
-		</table>
-	</div>
+<!-- 增加/编辑表单 -->
+<div id="form_div" class="row" hidden>
+	<form class="form-horizontal">
+		<div class="form-group">
+			<label for="name" class="col-sm-2 control-label">用户名</label>
+			<div class="col-sm-4">
+				<input type="text" class="form-control" id="form_div_name" name="name">
+			</div>
+			<div class="col-sm-4">
+				<p class="form-control-static text-info">必填</p>
+			</div>
+		</div>
+		<div class="form-group">
+			<label for="password" class="col-sm-2 control-label">初始密码</label>
+			<div class="col-sm-4">
+				<input type="password" class="form-control" id="form_div_password" name="password">
+			</div>
+			<div class="col-sm-4">
+				<p class="form-control-static text-info">6-16位数字、字母组合</p>
+			</div>
+		</div>
+		<div class="form-group">
+			<label for="password" class="col-sm-2 control-label">确认密码</label>
+			<div class="col-sm-4">
+				<input type="password" class="form-control" id="form_div_password_re">
+			</div>
+			<div class="col-sm-4">
+				<p class="form-control-static text-info">6-16位数字、字母组合</p>
+			</div>
+		</div>
+		<div class="form-group">
+			<label for="role" class="col-sm-2 control-label">用户角色</label>
+			<div class="col-sm-4">
+				<select id="form_div_select_role" name="role" class="form-control">
+					<option value="waiter" selected>酒店人员</option>
+					<option value="maintainer">维保人员</option>
+				</select>
+			</div>
+			<div class="col-sm-4">
+				<p class="form-control-static text-info">请选择</p>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-2 control-label">管理范围</label>
+			<div class="col-sm-4">
+				<select class="form-control" id="form_div_select_hotel"	></select>
+			</div>
+			<div class="col-sm-4">
+				<p class="form-control-static text-info">选择即添加</p>
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="col-sm-offset-2 col-sm-4">
+				<select class="form-control" size="8" id="form_div_selected_hotel"></select>
+			</div>
+			<div class="col-sm-4">
+				<p class="form-control-static text-info">已选酒店，双击取消选中</p>
+			</div>
+		</div>
+		<!-- 隐藏域，用于提交form -->
+		<div id="form_selected_hotel_ids" hidden></div>
+		<div class="form-group">
+			<div class="col-sm-offset-2 col-sm-4">
+				<button id="btn_save" type="button" class="btn btn-primary">保存</button>
+				<button id="btn_cancel" type="button" class="btn btn-default">取消/返回</button>
+			</div>
+		</div>
+	</form>
 </div>
-
 <script type="text/javascript" src="js/user.js"></script>

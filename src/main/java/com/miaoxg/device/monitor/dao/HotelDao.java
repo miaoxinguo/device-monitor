@@ -1,14 +1,20 @@
 package com.miaoxg.device.monitor.dao;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import com.miaoxg.device.monitor.core.Role;
@@ -22,18 +28,27 @@ public class HotelDao extends BaseDao {
     private static final Logger logger = LoggerFactory.getLogger(HotelDao.class);
     
     /**
-     * 插入
+     * 插入, 返回自增主键
      */
     public int insertHotel(Hotel hotel){
-        String sql = "insert Hotel(name) values(?)";
-        return getJdbcTemplate().update(sql, hotel); 
+        String sql = "insert hotel(name) values(?)";
+        
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        getJdbcTemplate().update(new PreparedStatementCreator() {
+            public PreparedStatement createPreparedStatement(Connection conn) throws SQLException {
+                PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+                ps.setString(1, hotel.getName());
+                return ps;
+            }
+        }, keyHolder);
+        return keyHolder.getKey().intValue(); 
     }
     
     /**
      * 删除
      */
     public int deletetHotel(Integer id){
-        String sql = "delete hotel where id = ?";
+        String sql = "delete from hotel where id = ?";
         return getJdbcTemplate().update(sql, id); 
     }
     
@@ -46,14 +61,22 @@ public class HotelDao extends BaseDao {
     }
     
     /**
+     * 查询数量
+     */
+    public int selectCount(String name){
+        String sql = "select count(*) from hotel where name = ?";
+        return getJdbcTemplate().queryForObject(sql, Integer.class, name);
+    }
+    
+    /**
      * 分页查询
      */
     public List<Hotel> selectHotels(HotelVo vo){
         StringBuffer sql = new StringBuffer("select h.id, h.name, u.id, u.name from hotel h "
                 + " left join user_hotel uh on h.id = uh.hotel_id left join user u on uh.user_id = u.id "
-                + "where 1=1 ");
+                + "where u.role='maintainer' ");
         if(vo.getUserId() != null && vo.getUserId() > 0){
-            sql.append(" and u.user_id = ?");
+            sql.append(" and u.id = ?");
         }
         if(StringUtils.isNotBlank(vo.getName())){
             sql.append(" and h.name like ?");
@@ -80,9 +103,9 @@ public class HotelDao extends BaseDao {
     public int selectHotelCount(HotelVo vo){
         StringBuffer sql = new StringBuffer("select count(*) from hotel h "
                 + " left join user_hotel uh on h.id = uh.hotel_id left join user u on uh.user_id = u.id "
-                + "where 1=1 ");
+                + "where u.role='maintainer' ");
         if(vo.getUserId() != null && vo.getUserId() > 0){
-            sql.append(" and u.user_id = ?");
+            sql.append(" and u.id = ?");
         }
         if(StringUtils.isNotBlank(vo.getName())){
             sql.append(" and h.name like ?");
@@ -104,30 +127,24 @@ public class HotelDao extends BaseDao {
      * 查询酒店的明细信息
      */
     public Hotel selectHotelInfo(Integer id){
-        String sql = "select h.id, h.name, u.id, u.name from hotel "
-                + " join user_hotel uh on h.id = uh.hotel_id join user u on uh.user_id = u.id "
-                + "where u.id = ? ";
-        
-        logger.debug("准备执行的sql: {}", sql.toString());
-        logger.debug("参数:{}", id);
-        return getJdbcTemplate().queryForObject(sql.toString(), new HotelRowMapper(), id);
+        String sql = "select h.id, h.name from hotel h where h.id = ? ";
+        return getJdbcTemplate().queryForObject(sql.toString(), new HotelNameRowMapper(), id);
     }
     
     /**
-     * 查询所有的酒店id和name
+     * 根绝用户查询酒店id和name -用于下拉菜单
      */
-    public List<Hotel> selectHotelByUser(Integer userId){
-        String sql = "";
-        if(userId == 0){  // TODO 如果系统不止一个管理员，获取该管理员的角色判断
-            sql = "select h.id, h.name from hotel h "; 
-            return getJdbcTemplate().query(sql, new HotelRowMapper());
+    public List<Hotel> selectNamesByUser(User user){
+        StringBuffer sql = new StringBuffer("select h.id, h.name from hotel h "); 
+        
+        // 管理员查询全部；  其他用户按id查
+        if(user.getRole() != Role.admin){
+            sql.append(" left join user_hotel uh on h.id = uh.hotel_id "
+                    + " left join user u on uh.user_id = u.id"
+                    + " where  u.id = ?");
+            return getJdbcTemplate().query(sql.toString(), new HotelNameRowMapper(), user.getId());
         }
-        else{
-            sql = "select h.id, h.name from hotel h "
-                    + " join user_hotel uh on h.id = uh.hotel_id join user u on uh.user_id = u.id"
-                    + " where u.id = ?"; 
-            return getJdbcTemplate().query(sql, new HotelRowMapper(), userId);
-        } 
+        return getJdbcTemplate().query(sql.toString(), new HotelNameRowMapper());
     }
     
     /**
@@ -140,19 +157,23 @@ public class HotelDao extends BaseDao {
             hotel.setId(rs.getInt("id"));
             hotel.setName(rs.getString("name"));
             User user = new User();
-            try{
-                user.setId(rs.getInt("u.id"));
-            } catch(Exception e){
-                //ingore
-            }
-            try{
-                user.setName(rs.getString("u.name")==null?"":rs.getString("u.name"));
-            } catch(Exception e){
-                //ingore
-                user.setName("d");
-            }
-            user.setRole(Role.maintainer);
+            user.setId(rs.getInt("u.id"));
+            user.setName(rs.getString("u.name")==null?"-":rs.getString("u.name"));
+            user.setRole(Role.admin);  // 这里仅为保证转json时不出现空指针错误
             hotel.setUser(user);
+            return hotel;
+        }
+    }
+    
+    /**
+     * 封装对象
+     */
+    public class HotelNameRowMapper implements RowMapper<Hotel> {
+        @Override
+        public Hotel mapRow(ResultSet rs, int line) throws SQLException {
+            Hotel hotel = new Hotel();
+            hotel.setId(rs.getInt("id"));
+            hotel.setName(rs.getString("name"));
             return hotel;
         }
     }

@@ -247,6 +247,13 @@ public class DeviceDao extends BaseDao {
                 + " from device d "
                 + " inner join hotel h on d.hotel_id = h.id "
                 + " where 1=1 ");
+        if(vo.getUserId() != null && vo.getUserId()>0 ){
+            sql.append( " and h.id in "
+                    + "(select hh.id from hotel hh "
+                    + " left join user_hotel uh on hh.id = uh.hotel_id"
+                    + " left join user u on uh.user_id = u.id "
+                    + "where u.id = ?)");
+        }
         if(vo.getHotelId() > 0){
             sql.append(" and h.id = ?");
         }
@@ -256,6 +263,9 @@ public class DeviceDao extends BaseDao {
         sql.append(" limit ?, ?");
         
         List<Object> params = new ArrayList<Object>();
+        if(vo.getUserId() != null && vo.getUserId()>0 ){
+            params.add(vo.getUserId());
+        }
         if(vo.getHotelId() > 0){
             params.add(vo.getHotelId());
         }
@@ -266,22 +276,7 @@ public class DeviceDao extends BaseDao {
         params.add(vo.getiDisplayLength());
         logger.debug("准备执行的sql: {}", sql.toString());
         logger.debug("参数:{}", params);
-        return getJdbcTemplate().query(sql.toString(), params.toArray(), new RowMapper<Device>(){
-            @Override
-            public Device mapRow(ResultSet rs, int rowNum) throws SQLException {
-                Device device = new Device();
-                device.setId(rs.getInt("id"));
-                device.setSid(rs.getString("sid"));
-                device.setName(rs.getString("name"));
-                
-                // 设置所在酒店
-                device.setHotel(new Hotel(rs.getString("h.name")));
-                device.setRoom(rs.getString("room"));
-                
-                device.setUsedHours(rs.getInt("used_hours"));
-                return device;
-            }
-        });
+        return getJdbcTemplate().query(sql.toString(), params.toArray(), new DeviceListRowMapper());
     }
     
     /**
@@ -328,7 +323,7 @@ public class DeviceDao extends BaseDao {
     /**
      * 基本信息的结果集映射
      */
-    public class DeviceRowMapper implements RowMapper<Device> {
+    private static final class DeviceRowMapper implements RowMapper<Device> {
         @Override
         public Device mapRow(ResultSet rs, int rowNum) throws SQLException {
             Device device = new Device();
@@ -337,6 +332,26 @@ public class DeviceDao extends BaseDao {
             device.setName(rs.getString("name"));
             device.setRoom(rs.getString("room"));
             device.setHotel(new Hotel(rs.getInt("hotel_id")));
+            return device;
+        }
+    }
+    
+    /**
+     * 列表查询的结果集映射
+     */
+    private static final class DeviceListRowMapper implements RowMapper<Device> {
+        @Override
+        public Device mapRow(ResultSet rs, int rowNum) throws SQLException {
+            Device device = new Device();
+            device.setId(rs.getInt("id"));
+            device.setSid(rs.getString("sid"));
+            device.setName(rs.getString("name"));
+            
+            // 设置所在酒店
+            device.setHotel(new Hotel(rs.getString("h.name")));
+            device.setRoom(rs.getString("room"));
+            
+            device.setUsedHours(rs.getInt("used_hours"));
             return device;
         }
     }

@@ -5,6 +5,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -83,7 +84,19 @@ public class DeviceService {
      * 批量更新滤网已用时长
      */
     public void updateUsedHours(Collection<MonitorValue> values) {
-        deviceDao.updateUsedHours(values);
+        /*
+         * 如果系统启动后一直没有获取到监测值，无法更新滤网使用时长
+         */
+        boolean isCacheUsable = false;
+        for(MonitorValue mv : values){
+            if(mv == null){
+                continue;
+            }
+            isCacheUsable = true;
+        }
+        if(isCacheUsable){
+            deviceDao.updateUsedHours(values);
+        }
     }
     
     /**
@@ -247,7 +260,11 @@ public class DeviceService {
             } 
             catch (IOException e) {
                 // 获取某设备监测值失败，继续处理下一设备
-                logger.error("获取设备：{}监测值失败", devId, e);
+                if(e instanceof SocketTimeoutException){
+                    logger.error("获取设备：{}监测值超时", devId);
+                }else{
+                    logger.error("获取设备：{}监测值失败", devId, e);
+                }
                 continue;
             } 
         }

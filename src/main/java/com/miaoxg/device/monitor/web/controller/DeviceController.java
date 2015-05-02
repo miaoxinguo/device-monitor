@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.miaoxg.device.monitor.core.Role;
 import com.miaoxg.device.monitor.entity.Device;
 import com.miaoxg.device.monitor.entity.MonitorValue;
 import com.miaoxg.device.monitor.entity.User;
@@ -53,10 +54,15 @@ public class DeviceController extends AbstractController{
      * 分页获取设备信息列表
      */
     @RequestMapping(value="devices", method=RequestMethod.GET)
-    public String getDevices(DeviceVo vo){
+    public String getDevices(DeviceVo vo, HttpSession session){
         logger.debug("offset:{}, limit:{}", vo.getiDisplayStart(), vo.getiDisplayLength());
         
-        DataTablesVo<Device> dtvo = deviceService.getDevices(vo);
+        User currUser = (User)session.getAttribute("user");
+        DataTablesVo<Device> dtvo =null;
+        if(Role.maintainer.equals(currUser.getRole())){
+            vo.setUserId(currUser.getId());
+        }
+        dtvo = deviceService.getDevices(vo);
         return JsonUtils.toDatatablesJson(dtvo.getCount(), dtvo.getTotal(), vo.getsEcho(), dtvo.getList());
     }
     
