@@ -122,7 +122,7 @@ public class DeviceService {
         List<String> sidList = null;
         int count = 0;
         
-        if(vo.getUserId() != null && vo.getUserId()== 0){        // TODO 如果管理员不止一个，这里要改为根据权限是否为管理员
+        if(vo.getUserId() != null && vo.getUserId()== 0){        // 如果管理员不止一个，这里要改为根据权限是否为管理员
             sidList = deviceDao.selectAllDeviceSid(vo);
             count = deviceDao.selectAllDeviceSidCount(vo);
         }
