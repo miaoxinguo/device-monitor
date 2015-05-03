@@ -32,8 +32,12 @@ public class SessionFilter implements Filter {
 	    String requestURI = req.getRequestURI();
 	    
         // 静态资源直接排除，即非/html目录下并且路径包含"."的请求
-	    // TODO 这种方式不严谨，改为按目录判断，可以把所有静态资源统一放到/static目录下
-        if(!requestURI.contains("/html") && requestURI.contains(".")){
+	    boolean isStatic = requestURI.contains("/bootstrap/") || 
+	                        requestURI.contains("/image/") ||
+	                        requestURI.contains("/js/") || 
+	                        requestURI.contains("/media/") || 
+	                        requestURI.contains("/My97DatePicker/") ;
+        if(isStatic){
             chain.doFilter(req, resp);
             return;
         }
