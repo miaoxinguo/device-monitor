@@ -37,7 +37,8 @@ $(document).ready(function(){
 		              {"mData":"temperature"},
 		              {"mData":"humidity"},
 		              {"mData":"co2"},
-		              {"mData":"nh3"}],  // 与后台返回属性一致
+		              {"mData":"nh3"},
+		              {"mData":"room"}],  // 与后台返回属性一致
 	    //"bFilter": true,                       //不使用过滤功能     
 	    "sPaginationType": "full_numbers",      //翻页界面类型   
 	    "oLanguage": {                          //国际化   
@@ -139,10 +140,11 @@ $('#monitorValueTable').DataTable().on( 'draw', function () {
 		    		}
 	        	}
 	        	else{
-	        		$modalDiv.find("div.panel").removeClass("panel-default panel-info").addClass("panel-warning");
+	        		$modalDiv.find("div.panel").removeClass("panel-default panel-info").addClass("panel-danger");
 	        	}
 	        	
-	        	$modalDiv.find("div.panel-heading").text( $tr.children("td:eq(1)").text() );  // name
+	        	$modalDiv.find("div.panel-heading #name").text( $tr.children("td:eq(1)").text() );  // name
+	        	$modalDiv.find("div.panel-heading #room").text( $tr.children("td:eq(8)").text() );  // room
 	        	$modalDiv.find("div.panel-body li").each(function(index){
 	        		var tdIndex = index + 4;  // 视块与表格数据的对应顺序固定
 	        		$(this).children("span").text( $tr.children("td:eq("+ tdIndex +")").text() );
@@ -150,9 +152,10 @@ $('#monitorValueTable').DataTable().on( 'draw', function () {
 	        	
 	        	// 图标点击事件
 	        	$modalDiv.find("div.panel-footer a:eq(0)").click(function(){
+	        		$("#edit_modal #form_name").next("p.form-control-static").text("");
 	        		$("#edit_modal .modal-title").text("设备维护");
-	        		//console.log($("#edit_modal input[name='id']"));
-	        		$("#edit_modal input[name='id']").val($tr.children("td:eq(0)").text());
+	        		$("#edit_modal #form_sid").val($tr.children("td:eq(0)").text());
+	        		$("#edit_modal #form_name").val($tr.children("td:eq(1)").text());
 	        		$("#edit_modal").modal(); 
 	        	})
 	        }
@@ -162,4 +165,33 @@ $('#monitorValueTable').DataTable().on( 'draw', function () {
     // 把表格的分页部分复制到视块视图
     $("#info_div").html("").append($("#monitorValueTable_info").clone(true));
     $("#pagination_div").html("").append($("#monitorValueTable_paginate").clone(true));
+});
+
+/**
+ * 事件 -- 模态框保存 
+ */
+$("#edit_modal #modal_btn_save").click(function(){
+	var $btn = $(this).button('loading');
+    
+	$("#edit_modal #form_name").next("p.form-control-static").text("");
+	
+	var name = $("#edit_modal #form_name").val();
+	if(name.length<6 || !isNormalChar(name)){
+		$("#edit_modal #form_name").next("p.form-control-static").addClass("text-danger").text("设备名不合法");
+		return;
+	}
+	var sid = $("#edit_modal #form_sid").val();
+	
+	$.ajax({
+		type: 'put',
+		url: "deviceName/"+ sid +"/"+ name,
+		success: function(result){
+			$btn.button('reset');
+			if(!result.success){
+				$("#edit_modal #form_name").next("p.form-control-static").addClass("text-danger").text(result.msg);
+				reutrn;
+			}
+			$("#edit_modal #form_name").next("p.form-control-static").addClass("text-success").text("保存成功");
+		}
+	});
 });

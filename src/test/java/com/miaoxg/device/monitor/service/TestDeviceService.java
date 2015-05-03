@@ -14,8 +14,14 @@ public class TestDeviceService {
     private DeviceService deviceService;
     
     @Test
-    public void testgetRemoteMonitorValue() throws Exception{
+    public void testGetRemoteMonitorValue() throws Exception{
         deviceService.getRemoteMonitorValue("123");  // 从平台去数据 并存入数据库和缓存
+    }
+    
+    @Test
+    public void testRename(){
+        deviceService.rename("108315578814", "test");
+        System.out.print("done");
     }
 }
 

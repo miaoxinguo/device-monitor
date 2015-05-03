@@ -121,4 +121,19 @@ public class DeviceController extends AbstractController{
         deviceService.modifyDevice(device);
         return JsonUtils.toSuccessJson();
     }
+    
+    /**
+     * 设备改名
+     */
+    @RequestMapping(value="deviceName/{sid}/{name}", method=RequestMethod.PUT)
+    public String editDeviceName(@PathVariable String sid, @PathVariable String name){
+        if(StringUtils.isBlank(sid)){
+            return JsonUtils.toFailureJson("编号不能为空");
+        }
+        if(StringUtils.isBlank(name)){
+            return JsonUtils.toFailureJson("设备名不能为空");
+        }
+        deviceService.rename(sid, name);
+        return JsonUtils.toSuccessJson();
+    }
 }

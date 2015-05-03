@@ -106,8 +106,31 @@ public class DeviceService {
      */
     public void rename(String deviceId, String newName) {
         
+        DatagramSocket client = getClient(5000);
+        InetAddress addr = getAddr(client);
+        
+        byte[] request = ("LNGRNM&"+deviceId+"&"+newName+"&").getBytes();
+        DatagramPacket sendPacket = new DatagramPacket(request, request.length, addr, Constants.SERVER_PORT);
+        try {
+            client.send(sendPacket);
+        
+            byte[] recvBuf = new byte[256];
+            DatagramPacket recvPacket = new DatagramPacket(recvBuf , recvBuf.length);
+            client.receive(recvPacket);
+            String recvStr = new String(recvPacket.getData(), 0, recvPacket.getLength());
+            
+            logger.debug("收到:{}", recvStr);
+        } 
+        catch (IOException e) {
+            if(e instanceof SocketTimeoutException){
+                throw new ServiceException("修改设备名失败:操作超时");
+            }else{
+                throw new ServiceException("修改设备名失败");
+            }
+        } 
+        client.close();
     }
-    
+
     /**
      * 判断sid是否存在
      */
@@ -138,6 +161,9 @@ public class DeviceService {
         
         // 从缓存查监测值
         List<MonitorValue> mvList = count>0 ? MonitorValueCache.INSTANCE.get(sidList) : new ArrayList<MonitorValue>();
+        for(MonitorValue mv : mvList){
+            mv.setRoom(deviceDao.selectDevice(mv.getDeviceSid()).getRoom());
+        }
         return new DataTablesVo<MonitorValue>(count, mvList);
        
     }
@@ -165,22 +191,8 @@ public class DeviceService {
      * TODO 现在的接口无法判断设备是否存在
      */
     public void getRemoteMonitorValue(String sid) {
-        DatagramSocket client = null;
-        try {
-            client = new DatagramSocket();
-            client.setSoTimeout(20000);
-        } catch (SocketException e) {
-           throw new RuntimeException("连接服务器失败");
-        }
-        
-        // 构造地址
-        InetAddress addr = null;
-        try {
-            addr = InetAddress.getByName(Constants.SERVER_IP);
-        } catch (UnknownHostException e) {
-            client.close();
-            throw new RuntimeException("连接服务器失败");
-        }
+        DatagramSocket client = getClient(20000);
+        InetAddress addr = getAddr(client);
         
         // 在缓存中取到所有的设备标识
         byte[] request = ("LNGNUM&" + sid).getBytes();
@@ -217,29 +229,8 @@ public class DeviceService {
      * 从从平台获取监测数值，存入数据库和缓存
      */
     public void getRemoteMonitorValue() {
-        /*
-         *  创建socket客户端
-         *  
-         *  现在的问题是： 平台不支持多线程, 且每一次socket通信都很慢，如果设备多，必然超过前台页面刷新周期（30s）
-         *  
-         *  TODO 平台必须提供批量查询或支持多线程，按平台接口修改方法
-         */
-        DatagramSocket client = null;
-        try {
-            client = new DatagramSocket();
-            client.setSoTimeout(20000);
-        } catch (SocketException e) {
-           throw new RuntimeException("连接服务器失败");
-        }
-        
-        // 构造地址
-        InetAddress addr = null;
-        try {
-            addr = InetAddress.getByName(Constants.SERVER_IP);
-        } catch (UnknownHostException e) {
-            client.close();
-            throw new RuntimeException("连接服务器失败");
-        }
+        DatagramSocket client = getClient(20000);
+        InetAddress addr = getAddr(client);
         
         // 从平台获取数据，存入 数据库 和缓存
         List<MonitorValue> tempList = new ArrayList<MonitorValue>();
@@ -335,5 +326,28 @@ public class DeviceService {
             obj.setUsedHours(-1);  // 如果离线默认值为0，会把已用时间覆盖掉
         }
         return obj;
+    }
+    
+    private InetAddress getAddr(DatagramSocket client) {
+        // 构造地址
+        InetAddress addr = null;
+        try {
+            addr = InetAddress.getByName(Constants.SERVER_IP);
+        } catch (UnknownHostException e) {
+            client.close();
+            throw new RuntimeException("连接服务器失败");
+        }
+        return addr;
+    }
+
+    private DatagramSocket getClient(int timeout) {
+        DatagramSocket client = null;
+        try {
+            client = new DatagramSocket();
+            client.setSoTimeout(timeout);
+        } catch (SocketException e) {
+           throw new RuntimeException("连接服务器失败");
+        }
+        return client;
     }
 }

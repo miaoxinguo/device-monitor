@@ -14,6 +14,7 @@ public class MonitorValue implements Serializable{
     private Integer deviceId;
     private String deviceSid;
     private String deviceName;
+    private String room;
     
     private boolean isOnLine;   // 是否在线
     private boolean isOpen;     // 是否开机
@@ -84,5 +85,11 @@ public class MonitorValue implements Serializable{
     }
     public void setUsedHours(int usedHours) {
         this.usedHours = usedHours;
+    }
+    public String getRoom() {
+        return room;
+    }
+    public void setRoom(String room) {
+        this.room = room;
     }
 }
