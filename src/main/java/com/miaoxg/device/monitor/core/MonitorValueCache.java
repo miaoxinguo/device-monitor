@@ -46,6 +46,13 @@ public enum MonitorValueCache {
     /**
      * 更新一条缓存记录
      */
+    public void remove(String deviceSid) {
+        cache.remove(deviceSid);
+    }
+    
+    /**
+     * 更新一条缓存记录
+     */
     public void update(String deviceSid, MonitorValue mv) {
         cache.put(deviceSid, mv);
     }
