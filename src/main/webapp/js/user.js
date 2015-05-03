@@ -82,14 +82,17 @@ $("#form_div #form_div_select_hotel").change(function(){
 	})
 	$("#form_div_selected_hotel").append($opt).val("");  // 添加到已选区并设置没有选中
 	$(this).val("");  // 待选区设置没有选中
+});
+
+$("#form_div #form_div_selected_hotel").change(function(){  // 复制到已选区的同时为其增加”回到待选区“双击事件
+	var $opt = $(this).children('option:selected');
+	var $hotelIds = $("#form_selected_hotel_ids");
 	
-	$opt.dblclick(function(){  // 复制到已选区的同时为其增加”回到待选区“双击事件
-		$("#form_div #form_div_select_hotel").append($(this)).val(""); // 待选区设置没有选中
-		$hotelIds.children("input[value='"+ $(this).val() +"']").remove();   // 隐藏域中删除
-		$hotelIds.children().each(function(index){
-			$(this).prop("name", "hotels["+ index +"].id");
-		})
-	});
+	$("#form_div #form_div_select_hotel").append($opt).val(""); // 待选区设置没有选中
+	$hotelIds.children("input[value='"+  $opt.val() +"']").remove();   // 隐藏域中删除
+	$hotelIds.children().each(function(index){
+		$(this).prop("name", "hotels["+ index +"].id");
+	})
 });
 
 //按钮点击事件 - 增加
