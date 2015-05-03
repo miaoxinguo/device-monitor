@@ -69,8 +69,10 @@ public class DeviceService {
      * 删除设备
      */
     public void removeDevice(String sid) {
-        // TODO 从缓存中删除
         deviceDao.deleteDevice(sid);
+        
+        // 从缓存中删除
+        MonitorValueCache.INSTANCE.remove(sid);
     }
     
     /**
