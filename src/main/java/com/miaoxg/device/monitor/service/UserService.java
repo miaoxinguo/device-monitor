@@ -56,8 +56,11 @@ public class UserService {
         
         Integer userId = userDao.insert(user);
         // 如果一个人拥有的酒店量很多，这里改成批量操作
-        // TODO 删除该酒店与其他维保人的关联
         for(Hotel hotel : user.getHotels()){
+            // 如果是修改维保人权限，删除该酒店与其他维保人的关联
+            if(user.getRole().toString().equals(Role.maintainer.toString())){
+                userHotelDao.deletetMaintainerHotel(hotel.getId());
+            }
             userHotelDao.insert(userId, hotel.getId());
         }
     }
