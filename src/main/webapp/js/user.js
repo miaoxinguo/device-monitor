@@ -149,6 +149,7 @@ $("#btn_add").click(function(){
 	$("#form_div #btn_cancel").click(function(){
 		$("#user_content").show();
 		$("#form_div").hide().clearForm().find("button").unbind();   // 也可以改为页面加载后绑定，这里就不用解除了
+		$("#form_div_selected_hotel").html("");
 	});
 })
 
@@ -223,7 +224,7 @@ $("#btn_edit").click(function(){
 				$("#userTable").DataTable().draw();   // 取表格对象 刷新
 				$("#btn_cancel").click();
 				$("#form_div form").clearForm();
-				$("#form_div_selected_hotel").val("");  // 清空已选区
+				$("#form_div_selected_hotel").html("");  // 清空已选区
 			}
 		});
 		return false;
