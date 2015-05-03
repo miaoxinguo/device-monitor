@@ -46,41 +46,50 @@
 
 <!-- 增加 -->
 <div id="form_add" class="row" hidden>
-	<form class="form-horizontal">
-		<div class="form-group">
-			<label for="sid" class="col-sm-2 control-label">设备编号</label>
-			<div class="col-sm-4">
-				<input type="text" class="form-control" id="form_add_sid" name="sid">
+	<div class="col-sm-10">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">增加设备</h3>
 			</div>
-			<div class="col-sm-4">
-				<p class="form-control-static text-info">必填。12位整数</p>
+			<div class="panel-body">
+				<form class="form-horizontal">
+					<div class="form-group">
+						<label for="sid" class="col-sm-2 control-label">设备编号</label>
+						<div class="col-sm-4">
+							<input type="text" class="form-control" id="form_add_sid" name="sid">
+						</div>
+						<div class="col-sm-4">
+							<p class="form-control-static text-info">必填。12位整数</p>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="hotel.id" class="col-sm-2 control-label">所在酒店</label>
+						<div class="col-sm-4">
+							<select id="select_hotel" name="hotel.id" class="form-control"></select>
+						</div>
+						<div class="col-sm-4">
+							<p class="form-control-static text-info">请选择。</p>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="room" class="col-sm-2 control-label">所在房间</label>
+						<div class="col-sm-4">
+							<input type="text" class="form-control" id="form_add_room" name="room">
+						</div>
+						<div class="col-sm-4">
+							<p class="form-control-static text-info">必填。房间号</p>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-offset-2 col-sm-3">
+							<button id="btn_save" type="button" class="btn btn-primary">保存</button>
+							<button id="btn_cancel" type="button" class="btn btn-default">取消/返回</button>
+						</div>
+					</div>
+				</form>
 			</div>
 		</div>
-		<div class="form-group">
-			<label for="hotel.id" class="col-sm-2 control-label">所在酒店</label>
-			<div class="col-sm-4">
-				<select id="select_hotel" name="hotel.id" class="form-control"></select>
-			</div>
-			<div class="col-sm-4">
-				<p class="form-control-static text-info">请选择。</p>
-			</div>
-		</div>
-		<div class="form-group">
-			<label for="room" class="col-sm-2 control-label">所在房间</label>
-			<div class="col-sm-4">
-				<input type="text" class="form-control" id="form_add_room" name="room">
-			</div>
-			<div class="col-sm-4">
-				<p class="form-control-static text-info">必填。房间号</p>
-			</div>
-		</div>
-		<div class="form-group">
-			<div class="col-sm-offset-2 col-sm-3">
-				<button id="btn_save" type="button" class="btn btn-primary">保存</button>
-				<button id="btn_cancel" type="button" class="btn btn-default">取消/返回</button>
-			</div>
-		</div>
-	</form>
+	</div>
 </div>
 
 <script type="text/javascript" src="js/device.js"></script>

@@ -85,6 +85,7 @@ $("#search_div #room").keyup(function(){
  */ 
 $("#btn_add").click(function(){
 	$("#form_add #form_add_sid").removeAttr("readonly");
+	$("#form_add .panel-title").text("增加设备");
 	$("#form_add").show();
 	$("#device_content").hide();
 	$("#form_add #select_hotel").children("option:eq(0)").prop("selected", true);
@@ -123,11 +124,14 @@ $("#btn_remove").click(function(){
 		alert("请选择一行");
 		return;
 	}
-	
+	var sid = t.$('tr.selected').children().eq(0).text();
+	if(confirm("删除编号为"+ sid +"的设备？")==false){
+		return;
+	}
 	// 提交后台删除
 	$.ajax({
 		type: 'delete',
-		url: "device/" + t.$('tr.selected').children().eq(0).text(),
+		url: "device/" + sid,
 		dataType: 'json',
 		success:function(data){
 			alert("删除成功");
@@ -158,6 +162,7 @@ $("#btn_edit").click(function(){
 	});
 	
 	$("#form_add #form_add_sid").attr("readonly","readonly");
+	$("#form_add .panel-title").text("编辑设备");
 	$("#form_add").show();
 	$("#device_content").hide();
 	

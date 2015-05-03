@@ -77,6 +77,7 @@ $("#search_div #search_hotel_name").keyup(function(){
 // 按钮点击事件 - 增加
 $("#btn_add").click(function(){
 	$("#hotel_content").hide();
+	$("#form_div .panel-title").text("新增酒店");
 	$("#form_div").show();
 	
 	$("#form_div #form_div_select_maintainer").children("option:eq(0)").prop("selected", true);
@@ -115,10 +116,14 @@ $("#btn_remove").click(function(){
 		alert("请选择一行");
 		return;
 	}
+	var hid = t.$('tr.selected').children().eq(0).text();
+	if(confirm("删除"+ hid +"？")==false){
+		return;
+	}
 	// 提交后台删除
 	$.ajax({
 		type: 'delete',
-		url: "hotel/" + t.$('tr.selected').children().eq(0).attr("id"),
+		url: "hotel/" + hid,
 		dataType: 'json',
 		success:function(data){
 			alert("删除成功");
@@ -147,6 +152,7 @@ $("#btn_edit").click(function(){
 		}	
 	});
 	
+	$("#form_div .panel-title").text("编辑酒店");
 	$("#form_div").show();
 	$("#hotel_content").hide();
 	

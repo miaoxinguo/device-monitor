@@ -96,6 +96,7 @@ $("#form_div #form_div_select_hotel").change(function(){
 $("#btn_add").click(function(){
 	$("#user_content").hide();
 	$("#form_div").show();
+	$("#form_div .panel-title").text("增加用户");
 	
 	// 设置form: 用户名、角色可用，密码允许修改
 	$("#form_div #form_div_name").prop("readonly", false).parent().next("div").children("p").text("必填")
@@ -156,6 +157,9 @@ $("#btn_remove").click(function(){
 		alert("请选择一行");
 		return;
 	}
+	if(confirm("删除用户"+ t.$('tr.selected').children().eq(0).text() +"？")==false){
+		return;
+	}
 	// 提交后台删除
 	$.ajax({
 		type: 'delete',
@@ -196,6 +200,7 @@ $("#btn_edit").click(function(){
 		}	
 	});
 	
+	$("#form_div .panel-title").text("编辑用户");
 	$("#form_div").show();
 	$("#user_content").hide();
 	

@@ -45,31 +45,40 @@
 
 <!-- 增加/编辑表单 -->
 <div id="form_div" class="row" hidden>
-	<form class="form-horizontal">
-		<div class="form-group">
-			<label for="name" class="col-sm-2 control-label">酒店名称</label>
-			<div class="col-sm-4">
-				<input type="text" class="form-control" id="form_div_name" name="name">
+	<div class="col-sm-10">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">增加设备</h3>
 			</div>
-			<div class="col-sm-4">
-				<p class="form-control-static text-info">必填</p>
+			<div class="panel-body">
+				<form class="form-horizontal">
+					<div class="form-group">
+						<label for="name" class="col-sm-2 control-label">酒店名称</label>
+						<div class="col-sm-4">
+							<input type="text" class="form-control" id="form_div_name" name="name">
+						</div>
+						<div class="col-sm-4">
+							<p class="form-control-static text-info">必填</p>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="user.id" class="col-sm-2 control-label">维保人</label>
+						<div class="col-sm-4">
+							<select id="form_div_select_maintainer" name="user.id" class="form-control"></select>
+						</div>
+						<div class="col-sm-4">
+							<p class="form-control-static text-info">请选择</p>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-offset-2 col-sm-3">
+							<button id="btn_save" type="button" class="btn btn-primary">保存</button>
+							<button id="btn_cancel" type="button" class="btn btn-default">取消/返回</button>
+						</div>
+					</div>
+				</form>
 			</div>
 		</div>
-		<div class="form-group">
-			<label for="user.id" class="col-sm-2 control-label">维保人</label>
-			<div class="col-sm-4">
-				<select id="form_div_select_maintainer" name="user.id" class="form-control"></select>
-			</div>
-			<div class="col-sm-4">
-				<p class="form-control-static text-info">请选择</p>
-			</div>
-		</div>
-		<div class="form-group">
-			<div class="col-sm-offset-2 col-sm-3">
-				<button id="btn_save" type="button" class="btn btn-primary">保存</button>
-				<button id="btn_cancel" type="button" class="btn btn-default">取消/返回</button>
-			</div>
-		</div>
-	</form>
+	</div>
 </div>
 <script type="text/javascript" src="js/hotel.js"></script>
