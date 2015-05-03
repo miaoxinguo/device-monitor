@@ -7,6 +7,7 @@ import javax.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.miaoxg.device.monitor.core.Role;
 import com.miaoxg.device.monitor.core.ServiceException;
 import com.miaoxg.device.monitor.dao.HotelDao;
 import com.miaoxg.device.monitor.dao.UserDao;
@@ -80,6 +81,18 @@ public class HotelService {
      */
     public DataTablesVo<Hotel> getHotels(HotelVo vo) {
         List<Hotel> hotelList = hotelDao.selectHotels(vo);
+        for(Hotel hotel : hotelList){
+            if(userDao.selectMaintainerCountByHotel(hotel.getId())>0){
+                hotel.setUser(userDao.selectMaintainerByHotel(hotel.getId()));
+            }else{
+                User user = new User();
+                user.setId(0);
+                user.setName("-");
+                user.setRole(Role.admin);  // 仅保证返回不出空指针，无其他作用
+                hotel.setUser(user);
+            }
+        }
+        
         int count = hotelDao.selectHotelCount(vo);
         
         return new DataTablesVo<Hotel>(count, hotelList);
@@ -92,6 +105,12 @@ public class HotelService {
         Hotel hotel = hotelDao.selectHotelInfo(id);
         if(userDao.selectMaintainerCountByHotel(id)>0){
             hotel.setUser(userDao.selectMaintainerByHotel(id));
+        }else{
+            User user = new User();
+            user.setId(0);
+            user.setName("-");
+            user.setRole(Role.admin);  // 仅保证返回不出空指针，无其他作用
+            hotel.setUser(user);
         }
         return hotel;
     }

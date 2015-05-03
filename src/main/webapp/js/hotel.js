@@ -10,8 +10,7 @@ $(document).ready(function(){
 	    "sAjaxSource": "hotels",		//获取数据的url   
 	    "fnServerData": function (sSource, aoData, fnCallback) {
 	    	aoData.push(
-	    		{"name": "name", "value": $("#search_div #search_hotel_name").val()},
-	    		{"name": "userId", "value": $("#search_maintainer_list").children('option:selected').val()}
+	    		{"name": "name", "value": $("#search_div #search_hotel_name").val()}
 	    	);
 	    	$.ajax( {
 		    	"dataType": 'json',
@@ -40,15 +39,11 @@ $(document).ready(function(){
 	 */ 
 	$.get("maintainerNames", function(data){
 		
-		// 查询区下拉框
-		var $searchMaintainerList = $("#search_maintainer_list");
-		
 		// form区下拉框
 		var $formMaintainerList = $("#form_div_select_maintainer");
 		
 		for(var index in data){
 			var option = "<option value='"+ data[index].id +"'>"+ data[index].name +"</option>";
-			$searchMaintainerList.append(option);
 			$formMaintainerList.append(option);
 		}
 	});
@@ -64,11 +59,6 @@ $('#hotelTable tbody').on('click', 'tr', function() {
 	}
 });
  
-//事件 - 维保人员下拉选择
-$("#search_div #search_maintainer_list").change(function(){
-	$("#hotelTable").DataTable().draw();   // 取表格对象 刷新
-});
-
 //事件 - 酒店模糊查询
 $("#search_div #search_hotel_name").keyup(function(){
 	$("#hotelTable").DataTable().draw();   // 取表格对象 刷新

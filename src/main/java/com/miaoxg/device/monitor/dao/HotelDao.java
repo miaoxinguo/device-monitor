@@ -72,21 +72,13 @@ public class HotelDao extends BaseDao {
      * 分页查询
      */
     public List<Hotel> selectHotels(HotelVo vo){
-        StringBuffer sql = new StringBuffer("select h.id, h.name, u.id, u.name from hotel h "
-                + " left join user_hotel uh on h.id = uh.hotel_id left join user u on uh.user_id = u.id "
-                + "where u.role='maintainer' ");
-        if(vo.getUserId() != null && vo.getUserId() > 0){
-            sql.append(" and u.id = ?");
-        }
+        StringBuffer sql = new StringBuffer("select h.id, h.name from hotel h where 1=1 ");
         if(StringUtils.isNotBlank(vo.getName())){
             sql.append(" and h.name like ?");
         }
         sql.append(" limit ?, ?");
         
         List<Object> params = new ArrayList<Object>();
-        if(vo.getUserId() != null && vo.getUserId() > 0){
-            params.add(vo.getUserId());
-        }
         if(StringUtils.isNotBlank(vo.getName())){
             params.add("%" + vo.getName() + "%");
         }
@@ -101,20 +93,12 @@ public class HotelDao extends BaseDao {
      * 查询记录数
      */
     public int selectHotelCount(HotelVo vo){
-        StringBuffer sql = new StringBuffer("select count(*) from hotel h "
-                + " left join user_hotel uh on h.id = uh.hotel_id left join user u on uh.user_id = u.id "
-                + "where u.role='maintainer' ");
-        if(vo.getUserId() != null && vo.getUserId() > 0){
-            sql.append(" and u.id = ?");
-        }
+        StringBuffer sql = new StringBuffer("select count(*) from hotel h where 1=1  ");
         if(StringUtils.isNotBlank(vo.getName())){
             sql.append(" and h.name like ?");
         }
         
         List<Object> params = new ArrayList<Object>();
-        if(vo.getUserId() != null && vo.getUserId() > 0){
-            params.add(vo.getUserId());
-        }
         if(StringUtils.isNotBlank(vo.getName())){
             params.add("%" + vo.getName() + "%");
         }
@@ -128,7 +112,7 @@ public class HotelDao extends BaseDao {
      */
     public Hotel selectHotelInfo(Integer id){
         String sql = "select h.id, h.name from hotel h where h.id = ? ";
-        return getJdbcTemplate().queryForObject(sql.toString(), new HotelNameRowMapper(), id);
+        return getJdbcTemplate().queryForObject(sql.toString(), new HotelRowMapper(), id);
     }
     
     /**
@@ -142,33 +126,15 @@ public class HotelDao extends BaseDao {
             sql.append(" left join user_hotel uh on h.id = uh.hotel_id "
                     + " left join user u on uh.user_id = u.id"
                     + " where  u.id = ?");
-            return getJdbcTemplate().query(sql.toString(), new HotelNameRowMapper(), user.getId());
+            return getJdbcTemplate().query(sql.toString(), new HotelRowMapper(), user.getId());
         }
-        return getJdbcTemplate().query(sql.toString(), new HotelNameRowMapper());
+        return getJdbcTemplate().query(sql.toString(), new HotelRowMapper());
     }
     
     /**
      * 封装对象
      */
     public class HotelRowMapper implements RowMapper<Hotel> {
-        @Override
-        public Hotel mapRow(ResultSet rs, int line) throws SQLException {
-            Hotel hotel = new Hotel();
-            hotel.setId(rs.getInt("id"));
-            hotel.setName(rs.getString("name"));
-            User user = new User();
-            user.setId(rs.getInt("u.id"));
-            user.setName(rs.getString("u.name")==null?"-":rs.getString("u.name"));
-            user.setRole(Role.admin);  // 这里仅为保证转json时不出现空指针错误
-            hotel.setUser(user);
-            return hotel;
-        }
-    }
-    
-    /**
-     * 封装对象
-     */
-    public class HotelNameRowMapper implements RowMapper<Hotel> {
         @Override
         public Hotel mapRow(ResultSet rs, int line) throws SQLException {
             Hotel hotel = new Hotel();
