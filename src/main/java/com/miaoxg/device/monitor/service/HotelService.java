@@ -32,7 +32,7 @@ public class HotelService {
      * 新增酒店
      */
     public void addHotel(Hotel hotel) {
-        // TODO 检测是否重名
+        // 检测是否重名
         if(existHotel(hotel.getName())){
             throw new ServiceException("酒店已存在");
         }
