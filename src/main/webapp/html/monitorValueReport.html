@@ -1,0 +1,90 @@
+<!-- 为ECharts准备具备大小（宽高）的Dom -->
+<div id="report_div_temperature" style="height:280px"></div>
+<div id="report_div_humidity" style="height:280px"></div>
+
+<script type="text/javascript">
+$(document).ready(function(){
+	$.getScript('http://echarts.baidu.com/build/dist/echarts-all.js', function(){
+		// 基于准备好的dom，初始化echarts图表
+	    var myChart = echarts.init(document.getElementById('report_div_temperature')); 
+	    var myChart2 = echarts.init(document.getElementById('report_div_humidity')); 
+	    option = {
+	            title : {
+	                text: '温度曲线'
+	                //subtext: '演示'
+	            },
+	            /*
+	            tooltip : {
+	                trigger: 'axis'
+	            },
+	            legend: {
+	                data:['最高温度','最低温度']
+	            },
+	            toolbox: {
+	                show : true,
+	                feature : {
+	                   // mark : {show: true},
+	                   // dataView : {show: true, readOnly: false},
+	                    //magicType : {show: true, type: ['line', 'bar']},
+	                    restore : {show: true},
+	                    saveAsImage : {show: true}
+	                }
+	            },*/
+	            calculable : true,
+	            xAxis : [
+	                {
+	                    type : 'category',
+	                    boundaryGap : false,
+	                    data : ['周一','周二','周三','周四','周五','周六','周日']
+	                }
+	            ],
+	            yAxis : [
+	                {
+	                    type : 'value',
+	                    axisLabel : {
+	                        formatter: '{value} °C'
+	                    }
+	                }
+	            ],
+	            series : [
+	                {
+	                    type:'line',
+	                    data:[25, 26, 25, 22, 25, 24, 25],
+	                    markPoint : {
+	                        data : [
+	                            {type : 'max', name: '最大值'},
+	                            {type : 'min', name: '最小值'}
+	                        ]
+	                    },
+	                    markLine : {
+	                        data : [
+	                            {type : 'average', name: '平均值'}
+	                        ]
+	                    }
+	                }
+	            ]
+	        };
+
+	    // 为echarts对象加载数据 
+	    myChart.setOption(option); 
+	    console.log(myChart.getSeries());
+	    
+	    myChart2.setOption(option); 
+		myChart2.setOption({
+			title : {
+				text : '湿度曲线'
+			},
+			yAxis : [{
+				axisLabel : {
+					formatter : '{value} %'
+				}
+			}]
+		});
+	
+		myChart2.setSeries([{
+			data : [ 25, 20, 10, 12, 21, 24, 15 ]
+		}]);
+	
+	});
+})
+</script>

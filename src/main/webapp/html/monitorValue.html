@@ -111,9 +111,12 @@
 <div id="report_modal" class="modal bs-example-modal-lg">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
-			<div class="modal-body">
-				<!-- 为ECharts准备一个具备大小（宽高）的Dom -->
-			    <div id="report_div" style="height:400px"></div>
+			<div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		        <h4 class="modal-title"></h4>
+		      </div>
+			<div class="modal-body" style="height: 600px">
+				
 			</div>
 		</div>
 		<!-- /.modal-content -->
@@ -122,6 +125,7 @@
 </div>
 <!-- /.modal -->
 
+<!-- 视块模板 -->
 <div id="template_div" hidden>
 	<div class="col-md-2">
 		<div class="panel">
