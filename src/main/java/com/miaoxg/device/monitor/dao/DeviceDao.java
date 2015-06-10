@@ -2,6 +2,7 @@ package com.miaoxg.device.monitor.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -29,9 +30,9 @@ public class DeviceDao extends BaseDao {
      * 插入一条记录
      */
     public int insertDevice(Device device) {
-        StringBuffer sql = new StringBuffer("insert device(sid, name, hotel_id, room) values(?, ?, ?, ?)");
+        StringBuffer sql = new StringBuffer("insert device(sid, name, hotel_id, room, sn, reg_date) values(?, ?, ?, ?, ?, ?)");
         return getJdbcTemplate().update(sql.toString(), device.getSid(), device.getSid(), 
-                device.getHotel().getId(), device.getRoom());
+                device.getHotel().getId(), device.getRoom(), device.getSn(), device.getRegDate().toString());
     }
     
     /**
@@ -65,9 +66,14 @@ public class DeviceDao extends BaseDao {
      * 更新一条记录
      */
     public int updateDevice(Device device) {
-        StringBuffer sql = new StringBuffer("update device set hotel_id=?, room=? where sid=?");
+       
+        StringBuffer sql = new StringBuffer("update device set hotel_id=?, room=?, sn=?, reg_date=? where sid=?");
+
+        logger.debug("准备执行的sql: {}", sql.toString());
+        logger.debug("参数:{}", device.getRegDate().toString());
+        
         return getJdbcTemplate().update(sql.toString(), 
-                device.getHotel().getId(), device.getRoom(),  device.getSid());
+                device.getHotel().getId(), device.getRoom(), device.getSn(), device.getRegDate().toString(), device.getSid());
     }
     
     /**
@@ -243,7 +249,7 @@ public class DeviceDao extends BaseDao {
      * 分页查询设备信息
      */
     public List<Device> selectDevices(DeviceVo vo) {
-        StringBuffer sql = new StringBuffer("select d.id, d.sid, d.name, d.room, d.used_hours, h.name"
+        StringBuffer sql = new StringBuffer("select d.id, d.sid, d.name, d.room, d.sn, d.reg_date, d.used_hours, h.name"
                 + " from device d "
                 + " inner join hotel h on d.hotel_id = h.id "
                 + " where 1=1 ");
@@ -260,6 +266,12 @@ public class DeviceDao extends BaseDao {
         if(StringUtils.isNotBlank(vo.getRoom())){
             sql.append(" and d.room like ?");
         }
+        if(vo.getUsedHoursNotShorter() > 0){
+            sql.append(" and d.used_hours > ?");
+        }
+        if(vo.getUsedHoursNotLonger() > 0){
+            sql.append(" and d.used_hours < ?");
+        }
         sql.append(" limit ?, ?");
         
         List<Object> params = new ArrayList<Object>();
@@ -271,6 +283,12 @@ public class DeviceDao extends BaseDao {
         }
         if(StringUtils.isNotBlank(vo.getRoom())){
             params.add("%" + vo.getRoom() + "%");
+        }
+        if(vo.getUsedHoursNotShorter() > 0){
+            params.add(vo.getUsedHoursNotShorter());
+        }
+        if(vo.getUsedHoursNotLonger() > 0){
+            params.add(vo.getUsedHoursNotLonger());
         }
         params.add(vo.getiDisplayStart());
         params.add(vo.getiDisplayLength());
@@ -290,6 +308,12 @@ public class DeviceDao extends BaseDao {
         if(StringUtils.isNotBlank(vo.getRoom())){
             sql.append(" and d.room like ?");
         }
+        if(vo.getUsedHoursNotShorter() > 0){
+            sql.append(" and d.used_hours > ?");
+        }
+        if(vo.getUsedHoursNotLonger() > 0){
+            sql.append(" and d.used_hours < ?");
+        }
         
         List<Object> params = new ArrayList<Object>();
         if(vo.getHotelId() > 0){
@@ -298,6 +322,12 @@ public class DeviceDao extends BaseDao {
         if(StringUtils.isNotBlank(vo.getRoom())){
             params.add("%" + vo.getRoom() + "%");
         }
+        if(vo.getUsedHoursNotShorter() > 0){
+            params.add(vo.getUsedHoursNotShorter());
+        }
+        if(vo.getUsedHoursNotLonger() > 0){
+            params.add(vo.getUsedHoursNotLonger());
+        }
         return getJdbcTemplate().queryForObject(sql.toString(), params.toArray(), Integer.class);
     }
     
@@ -305,7 +335,7 @@ public class DeviceDao extends BaseDao {
      * 根据sid查询设备信息
      */
     public Device selectDevice(String sid) {
-        String sql = "select d.id, d.sid, d.name, d.room, d.hotel_id from device d  where sid = ?";
+        String sql = "select d.id, d.sid, d.name, d.room, d.sn, d.reg_date, d.hotel_id from device d  where sid = ?";
         
         logger.debug("准备执行的sql: {}", sql.toString());
         logger.debug("参数:{}", sid);
@@ -332,6 +362,8 @@ public class DeviceDao extends BaseDao {
             device.setName(rs.getString("name"));
             device.setRoom(rs.getString("room"));
             device.setHotel(new Hotel(rs.getInt("hotel_id")));
+            device.setSn(rs.getString("sn"));
+            device.setRegDate(LocalDate.parse(rs.getString("reg_date")));
             return device;
         }
     }
@@ -351,6 +383,8 @@ public class DeviceDao extends BaseDao {
             device.setHotel(new Hotel(rs.getString("h.name")));
             device.setRoom(rs.getString("room"));
             
+            device.setSn(rs.getString("sn"));
+            device.setRegDate(LocalDate.parse(rs.getString("reg_date")));
             device.setUsedHours(rs.getInt("used_hours"));
             return device;
         }

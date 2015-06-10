@@ -10,7 +10,9 @@ $(document).ready(function(){
 	    "fnServerData": function (sSource, aoData, fnCallback) {
 	    	aoData.push(
 	    		{"name": "hotelId", "value": $("#hotelList").children('option:selected').val()},
-	    		{"name": "room", "value": $("#search_div #room").val()}
+	    		{"name": "room", "value": $("#search_div #room").val()},
+	    		{"name": "usedHoursNotShorter", "value": $("#search_div #used_hours_not_shorter").val()==''?0:$("#search_div #used_hours_not_shorter").val()},
+	    		{"name": "usedHoursNotLonger", "value": $("#search_div #used_hours_not_longer").val()==''?0:$("#search_div #used_hours_not_longer").val()}
 	    	);
 	    	$.ajax( {
 		    	"dataType": 'json',
@@ -56,5 +58,25 @@ $("#search_div #hotelList").change(function(){
 
 //事件 - 酒店模糊查询
 $("#search_div #room").keyup(function(){
+	$("#deviceTable").DataTable().draw();   // 取表格对象 刷新
+});
+
+//事件 - 滤网已用时长
+$("#search_div #used_hours_not_shorter").keyup(function(){
+	if(!isNum($(this).val())){
+		alert('请输入数字');
+		$(this).val('');
+		return;
+	}
+	$("#deviceTable").DataTable().draw();   // 取表格对象 刷新
+});
+
+//事件 - 滤网已用时长
+$("#search_div #used_hours_not_longer").keyup(function(){
+	if(!isNum($(this).val())){
+		alert('请输入数字');
+		$(this).val('');
+		return;
+	}
 	$("#deviceTable").DataTable().draw();   // 取表格对象 刷新
 });

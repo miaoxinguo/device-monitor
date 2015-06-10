@@ -1,6 +1,9 @@
 package com.miaoxg.device.monitor.entity;
 
 import java.io.Serializable;
+import java.time.LocalDate;
+
+import org.springframework.format.annotation.DateTimeFormat;
 
 public class Device implements Serializable{
     
@@ -12,6 +15,23 @@ public class Device implements Serializable{
     private String room;   // 具体房间号
     private Hotel hotel;   // 所属酒店
     
+    private String sn;     // 滤网二维码
+    
+    @DateTimeFormat(pattern="yyyy-MM-dd")   
+    private LocalDate regDate;   // 滤网注册日期
+    
+    public String getSn() {
+        return sn;
+    }
+    public void setSn(String sn) {
+        this.sn = sn;
+    }
+    public LocalDate getRegDate() {
+        return regDate;
+    }
+    public void setRegDate(LocalDate regDate) {
+        this.regDate = regDate;
+    }
     private int usedHours;  // 滤网已使用时长（小时）
     
     public Integer getId() {

@@ -82,6 +82,12 @@ public class DeviceController extends AbstractController{
         if(StringUtils.isBlank(device.getSid())){
             return JsonUtils.toFailureJson("设备编号不能为空");
         }
+        if(StringUtils.isBlank(device.getSn())){
+            return JsonUtils.toFailureJson("滤网编号不能为空");
+        }
+        if(device.getRegDate() == null){
+            return JsonUtils.toFailureJson("滤网注册时间不能为空");
+        }
 //        if(MonitorValueCache.INSTANCE.containsKey(device.getSid())){
 //            return JsonUtils.toFailureJson("设备编号已存在");
 //        }
@@ -117,6 +123,12 @@ public class DeviceController extends AbstractController{
         }
         if(StringUtils.isBlank(device.getRoom())){
             return JsonUtils.toFailureJson("房间号不能为空");
+        }
+        if(StringUtils.isBlank(device.getSn())){
+            return JsonUtils.toFailureJson("滤网编号不能为空");
+        }
+        if(device.getRegDate() == null){
+            return JsonUtils.toFailureJson("滤网注册时间不能为空");
         }
         deviceService.modifyDevice(device);
         return JsonUtils.toSuccessJson();

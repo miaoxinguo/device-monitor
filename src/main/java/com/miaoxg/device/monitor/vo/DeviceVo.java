@@ -9,7 +9,21 @@ public class DeviceVo extends Page{
     private Integer userId;
     private Integer hotelId;
     private String room;
+    private int usedHoursNotShorter;
+    private int usedHoursNotLonger;
 
+    public int getUsedHoursNotShorter() {
+        return usedHoursNotShorter;
+    }
+    public void setUsedHoursNotShorter(int usedHoursNotShorter) {
+        this.usedHoursNotShorter = usedHoursNotShorter;
+    }
+    public int getUsedHoursNotLonger() {
+        return usedHoursNotLonger;
+    }
+    public void setUsedHoursNotLonger(int usedHoursNotLonger) {
+        this.usedHoursNotLonger = usedHoursNotLonger;
+    }
     public Integer getUserId() {
         return userId;
     }

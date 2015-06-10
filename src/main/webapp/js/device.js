@@ -12,7 +12,9 @@ $(document).ready(function(){
 	    "fnServerData": function (sSource, aoData, fnCallback) {
 	    	aoData.push(
 	    		{"name": "hotelId", "value": $("#hotelList").children('option:selected').val()},
-	    		{"name": "room", "value": $("#search_div #room").val()}
+	    		{"name": "room", "value": $("#search_div #room").val()},
+	    		{"name": "usedHoursNotShorter", "value": $("#search_div #used_hours_not_shorter").val()==''?0:$("#search_div #used_hours_not_shorter").val()},
+	    		{"name": "usedHoursNotLonger", "value": $("#search_div #used_hours_not_longer").val()==''?0:$("#search_div #used_hours_not_longer").val()}
 	    	);
 	    	$.ajax( {
 		    	"dataType": 'json',
@@ -29,6 +31,8 @@ $(document).ready(function(){
 	                     {"mData":"name"},
 	                     {"mData":"hotel.name"},
 	                     {"mData":"room"},
+	                     {"mData":"sn"},
+	                     {"mData":"regDate"},
 	                     {"mData":"usedHours", "fnCreatedCell": function (nTd, sData, oData, iRow, iCol) {
 	                    	 if(sData > 1500){
 	                    		 $(nTd).addClass("text-danger");
@@ -68,6 +72,16 @@ $(document).ready(function(){
 			$form_hotelSelect.append(option);
 		}
 	});
+	
+	/*
+	 * 设置表单中注册时间为日期格式
+	 */
+	$('#form_add_regDate').datetimepicker({
+		minView: "month", //选择日期后，不会再跳转去选择时分秒 
+	　　format: "yyyy-mm-dd", //选择日期后，文本框显示的日期格式 
+	　　language: 'zh-CN', //汉化 
+	　　autoclose:true //选择日期后自动关闭
+	});
 });
 
 //事件 - 酒店下拉选择
@@ -77,6 +91,26 @@ $("#search_div #hotelList").change(function(){
 
 //事件 - 酒店模糊查询
 $("#search_div #room").keyup(function(){
+	$("#deviceTable").DataTable().draw();   // 取表格对象 刷新
+});
+
+//事件 - 滤网已用时长
+$("#search_div #used_hours_not_shorter").keyup(function(){
+	if(!isNum($(this).val())){
+		alert('请输入数字');
+		$(this).val('');
+		return;
+	}
+	$("#deviceTable").DataTable().draw();   // 取表格对象 刷新
+});
+
+//事件 - 滤网已用时长
+$("#search_div #used_hours_not_longer").keyup(function(){
+	if(!isNum($(this).val())){
+		alert('请输入数字');
+		$(this).val('');
+		return;
+	}
 	$("#deviceTable").DataTable().draw();   // 取表格对象 刷新
 });
 
@@ -156,6 +190,8 @@ $("#btn_edit").click(function(){
 		dataType: 'json',
 		success:function(data){
 			$("#form_add #form_add_sid").val(data.sid);
+			$("#form_add #form_add_sn").val(data.sn);
+			$("#form_add #form_add_regDate").val(data.regDate);
 			$("#form_add #select_hotel").children("option[value='"+data.hotel.id+"']").prop("selected", true);
 			$("#form_add #form_add_room").val(data.room);
 		}	
