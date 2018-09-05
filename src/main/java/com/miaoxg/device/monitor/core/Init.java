@@ -29,20 +29,20 @@ public class Init extends ContextLoaderListener{
         // 加载监测值缓存
         logger.info("加载设备缓存...");
         try{
-            MonitorValueCache.INSTANCE.load();
+//            MonitorValueCache.INSTANCE.load();
         }catch(Exception e){
             logger.error("加载设备缓存异常, 系统启动失败", e);
             System.exit(1);
         }
         
         // 容器启动后，立即执行一次获取检测值的任务
-        StdScheduler myScheduler = ApplicationContextHolder.getBean("myScheduler", StdScheduler.class);
-        JobKey jobKey = new JobKey("getMonitorValueJob");
-        try {
-            myScheduler.triggerJob(jobKey);
-        } catch (SchedulerException e) {
-            logger.error("执行任务失败");
-        }
+//        StdScheduler myScheduler = ApplicationContextHolder.getBean("myScheduler", StdScheduler.class);
+//        JobKey jobKey = new JobKey("getMonitorValueJob");
+//        try {
+//            myScheduler.triggerJob(jobKey);
+//        } catch (SchedulerException e) {
+//            logger.error("执行任务失败");
+//        }
     }
 
     @Override

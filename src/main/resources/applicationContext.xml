@@ -13,8 +13,8 @@
 	<!-- 配置DataSource数据源 -->
 	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
 		<property name="url" value="jdbc:mysql://127.0.0.1:3306/dm" />
-	    <property name="username" value="dm_root" />
-	    <property name="password" value="321" />
+	    <property name="username" value="root" />
+	    <property name="password" value="123456" />
 	     
 	    <property name="filters" value="stat" />
 	    
